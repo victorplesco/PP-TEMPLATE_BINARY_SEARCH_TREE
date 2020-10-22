@@ -55,7 +55,7 @@ class Node
          * @param
          */
 
-        Node (const PairType& l_Data) : m_Data{l_Data}, m_Parent{nullptr} 
+        Node (const PairType& l_Data) : m_Parent{nullptr}, m_Data{l_Data}
         {std::cout << "Node: overloaded ctor\n";};
 
         /** 
@@ -63,7 +63,7 @@ class Node
          * @param 
          */
 
-        Node (const PairType&& l_Data) : m_Data{l_Data}, m_Parent{nullptr} 
+        Node (const PairType&& l_Data) : m_Parent{nullptr}, m_Data{l_Data}
         {std::cout << "Node: move ctor\n";};
 
         /** @brief DESTRUCTOR. */
