@@ -8,14 +8,26 @@
 #ifndef _BST_
 #define _BST_
 
+#define _BINARYSEARCHTREE_CHECK_CONSTRUCTORS_ 0
+#define _BINARYSEARCHTREE_CHECK_SUPPORT_ 0
+#define _BINARYSEARCHTREE_CHECK_FUNCTIONS_ 1
+
+#define _ITERATOR_CHECK_CONSTRUCTORS_ 0
+#define _ITERATOR_CHECK_OPERATORS_ 0
+
+#define _NODE_CHECK_CONSTRUCTORS_ 0
+
 #include <iostream>
 #include <memory>
 #include <utility>
+#include <vector>
+
+#include "Iterator.h"
+#include "Node.h"
 
 template<typename KeyType, typename ValueType, class Comparison = std::less<KeyType>>
 class BinarySearchTree
 {
-
 
     typedef std::pair<const KeyType, ValueType> pair_t;
     typedef Node<pair_t> node_t;
@@ -30,6 +42,7 @@ class BinarySearchTree
 
     private:
 
+        /** @brief unique_ptr to the root. */
         std::unique_ptr<node_t> m_Root;
 
 
@@ -40,9 +53,33 @@ class BinarySearchTree
 
     public:
 
-        /** @brief DEFAULT CTOR. */
-        BinarySearchTree () noexcept : m_Root{nullptr} 
-        {std::cout << "BinarySearchTree: default ctor\n";};
+        /** 
+         * @brief DEFAULT CTOR. 
+         * @see insert();
+         */
+        BinarySearchTree () noexcept
+        {if(_BINARYSEARCHTREE_CHECK_CONSTRUCTORS_) std::cout << "\nBinarySearchTree: default ctor\n";};
+
+        /** 
+         * @brief DEEP COPY CTOR. Performs a deep copy of a given tree.
+         * @param other const lvalue reference to an existing tree.
+         * @see main();
+         */
+        BinarySearchTree (const BinarySearchTree& other)
+        {
+            if(_BINARYSEARCHTREE_CHECK_CONSTRUCTORS_)
+            std::cout << "\nBinarySearchTree: deep copy ctor\n";
+
+            copy(other.m_Root);
+        };
+
+        /** 
+         * @brief MOVE CTOR. Constructs a new tree given an existing tree.
+         * @param other const rvalue reference to an existing tree.
+         * @see main();
+         */
+        BinarySearchTree (const BinarySearchTree&& other) noexcept : m_Root{std::move(other.m_Root)}
+        {if(_BINARYSEARCHTREE_CHECK_CONSTRUCTORS_) std::cout << "BinarySearchTree: move ctor\n";};
         
 
     /* ########################################################################################################################################################################### */
@@ -51,79 +88,79 @@ class BinarySearchTree
 
 
     private: 
-    
-        /** @brief */
+
+        /** 
+         * @brief Contains the possible outcomes when comparing keys. Gives directions.
+         * @see sink();
+         */
         enum kin {equal, go_left, go_right};
 
-        /** @brief */
+        /** @brief COMPARISON(std::less<>) OPERATOR. */
         Comparison LESS;
 
+        /** @brief */
 
-    /* ########################################################################################################################################################################### */
-    /* ## BinarySearchTree: Support ############################################################################################################################################## */
-    /* ########################################################################################################################################################################### */
-  
-
-    public:
-
+        //copy();
 
         /**
-         * @brief
-         * @return
-         * @note
+         * @brief SINK. Support function to insert(). Navigates through the tree basing its movements
+         *        on the LESS() comparison between the inserted key and the keys present in the tree.
+         *        Goes left whenever the inserted key is smaller and right when its bigger. It stops
+         *        whenever the function doesn't find a left or right child or the keys are equal (aka 
+         *        the key is already present in the tree).
+         * 
+         * @param p_Node pointer to the root.
+         * @param l_Key const lvalue reference to a key.
+         * @return std::pair<node_t*, kin>: node_t* is a pointer to node, kin is the output of the comparison.
+         * @see insert(); _find();
          */
-        std::pair<node_t*, kin> sink(node_t* p_Node, const KeyType& l_Key)
-        {
-            if(LESS(l_Key, p_Node -> m_Data.first))
-            {
-                std::cout << "\nsink(): Key is smaller.\n";
-                if(p_Node -> m_LeftChild != nullptr)
-                {
-                    std::cout << "\nsink(): LeftChild exists[MOVE LEFT]!\n";
-                    return sink(p_Node -> m_LeftChild.get(), l_Key);
-                }
-                            std::cout << "\nsink(): LeftChild doesn't exist[STOP]!\n";
-                            return std::make_pair(p_Node, kin::go_left);
-            }
-
-            else if(LESS(p_Node -> m_Data.first, l_Key))
-            {
-                std::cout << "\nsink(): Key is bigger.\n";
-                if(p_Node -> m_RightChild != nullptr)
-                {
-                    std::cout << "\nsink(): RightChild exists[MOVE RIGHT]!\n";
-                    return sink(p_Node -> m_RightChild.get(), l_Key);
-                }
-                            std::cout << "\nsink(): RightChild doesn't exist[STOP]!\n";
-                            return std::make_pair(p_Node, kin::go_right);
-            }
-
-            std::cout << "\nsink(): Key exists[STOP]!\n";
-            return std::make_pair(p_Node, kin::equal);
-        };
+        std::pair<node_t*, kin> sink(node_t* p_Root, const KeyType& l_Key);
+       
+        /**
+         * @brief _find(). Support function to find(). Is used to reduce lines of code when returning
+         *        const_iterator and iterator. The function calls sink().
+         * 
+         * @param l_Key const lvalue reference to the key to be found in the tree.
+         * @return node_t*: pointer to the node containing the key or nullptr if not found.
+         * @see BinarySearchTree::find();erase()
+         */ 
+        node_t* _find(const KeyType& l_Key);
 
         /**
-         * @brief SUPPORT to find()
-         * @param l_Key const lvalue reference to the key to be found in the tree
+         * @brief SUPPORT to erase().
+         * @param vector
+         * @param start
+         * @param end
+         * @return 
+         * @see
+         */ 
+        node_t* reorder(const std::vector<node_t*>& vector, const KeyType& start, const KeyType& end) const noexcept;
+
+        /**
+         * @brief findmin():
+         * @param l_Node const lvalue reference to the key to be found in the tree
          * @return Pointer to the node containing the key or nullptr if not found.
          * @see sink();
          * @note Reduces code lines for iterator and const_iterator output.
          */ 
-        node_t* _find(const KeyType& l_Key)
-        {
-            if(m_Root.get() == nullptr) {return nullptr;}
+        node_t* findmin(node_t* l_Node) const noexcept;
+        
+        /**
+         * @brief leftmost(). Support function to erase().
+         * @param l_Key const lvalue reference to the key to be found in the tree
+         * @return Pointer to the node containing the key or nullptr if not found.
+         * @see sink();
+         * @note Reduces code lines for iterator and const_iterator output.
+         */
+        node_t* leftmost(node_t* l_Node) const noexcept;
 
-            std::pair<node_t*, kin> sinked = sink(m_Root.get(), l_Key);
-            if(sinked.second == kin::equal) {return sinked.first;}
 
-            return nullptr;
-        };
-
-
-        /* ########################################################################################################################################################################### */
-        /* ## BinarySearchTree: Member Functions ##################################################################################################################################### */
-        /* ########################################################################################################################################################################### */
+    /* ########################################################################################################################################################################### */
+    /* ## BinarySearchTree: Member Functions ##################################################################################################################################### */
+    /* ########################################################################################################################################################################### */
   
+
+    public: 
 
         /**
          * @brief 
@@ -131,44 +168,74 @@ class BinarySearchTree
          * @return 
          * @note
          */ 
-        std::pair<iterator, bool> insert(pair_t&& l_Data)
+        std::pair<iterator, bool> insert(pair_t&& l_Data);
+
+        /**
+         * @brief 
+         * @param
+         * @return 
+         * @note
+         */ 
+        template<class... Args>
+        std::pair<iterator, bool> emplace(Args&&... args)
         {
-            std::cout << "\nKey " << l_Data.first << std::endl;
-            if(m_Root.get() == nullptr)
-            {
-                m_Root.reset(new node_t{l_Data});
-                std::cout << "\ninsert(): CREATING ROOT\n\n";
-
-                    /** @brief The below return will call overloaded and move iterator ctors. */
-                    return std::make_pair(iterator{m_Root.get()}, true);
-            }
-
-            node_t* p_Root = m_Root.get();
-            node_t* p_Node;
-
-            std::pair<node_t*, kin> sinked = sink(p_Root, l_Data.first);
-
-            switch (sinked.second)
-            {
-            case (equal)   :
-                std::cout << "\ninsert()[switch]: KEY EQUAL[EXIT].\n\n";
-                return std::pair<iterator, bool>(iterator(sinked.first), false);	
-                break;			
-            case (go_left) :
-                std::cout << "\ninsert()[switch]: LEFT CHILD[CREATE].\n\n";
-                p_Node = new node_t{l_Data};
-                sinked.first -> m_LeftChild.reset(p_Node);
-                break;
-            case (go_right) :
-                std::cout << "\ninsert()[switch]: RIGHT CHILD[CREATE].\n\n";
-                p_Node = new node_t{l_Data};
-                sinked.first -> m_RightChild.reset(p_Node);
-                break;
-            };
-
-            p_Node -> m_Parent = sinked.first;
-                return std::pair<iterator, bool>(iterator(p_Node), true);
+            std::cout << "\nemplace(): [CREATE].\n";
+            return insert(pair_t{std::forward<Args>(args)...});
         };
+
+        /**
+         * @brief 
+         * @param
+         * @return 
+         * @note
+         */ 
+        void erase(const KeyType& l_Key)
+        {
+            node_t* p{_find(l_Key)};
+            if(!p) return;
+            
+            auto l=leftmost(p);
+            std::cout << "KEY IS " << l -> m_Data.first;
+            if(p == m_Root.get()){
+                m_Root.release();
+                if(p->m_RightChild){
+                    p->m_RightChild->m_Parent=nullptr;
+                    m_Root.reset(p->m_RightChild.release());
+                    if(p->m_LeftChild){
+                        p->m_LeftChild->m_Parent=l;
+                        l->m_LeftChild.reset(p->m_LeftChild.release());
+                    }
+                }
+                if(p->m_LeftChild){
+                    p->m_LeftChild->m_Parent=nullptr;
+                    m_Root.reset(p->m_LeftChild.release());
+                }
+            }
+            else if(p->m_Parent->m_LeftChild.get()==p){
+                p->m_Parent->m_LeftChild.release();
+                if(p->m_RightChild){
+                    p->m_RightChild->m_Parent=p->m_Parent;
+                    p->m_Parent->m_LeftChild.reset(p->m_RightChild.release());
+                }
+                if(p->m_LeftChild){
+                    p->m_LeftChild->m_Parent=l;
+                    l->m_LeftChild.reset(p->m_LeftChild.release());
+                }
+            }
+            else{
+                p->m_Parent->m_RightChild.release();
+                if(p->m_LeftChild){
+                    p->m_LeftChild->m_Parent=l;
+                    if(p->m_RightChild) l->m_LeftChild.reset(p->m_LeftChild.release());
+                    else l->m_RightChild.reset(p->m_LeftChild.release());
+                }
+                if(p->m_RightChild){
+                    p->m_RightChild->m_Parent=p->m_Parent;
+                    p->m_Parent->m_RightChild.reset(p->m_RightChild.release());
+                }
+            }
+            delete p;  
+        }
 
         /**
          * @brief find the node in the tree with a given key. 
@@ -176,8 +243,7 @@ class BinarySearchTree
          * @return iterator to the node containing the key or nullptr otherwise.
          * @note uses _find() to reduce code lines.
          */ 
-        iterator find(const KeyType& l_Key)
-        {return iterator{_find(l_Key)};};
+        iterator find(const KeyType& l_Key);
 
         /**
          * @brief find the node in the tree with a given key. 
@@ -185,80 +251,58 @@ class BinarySearchTree
          * @return const_iterator to the node containing the key or nullptr otherwise.
          * @note uses _find() to reduce code lines.
          */ 
-        const_iterator find(const KeyType& l_Key) const
-        {return const_iterator{_find(l_Key)};};
+        const_iterator find(const KeyType& l_Key) const;
 
         /**
          * @brief
          * @return
          * @note
          */
-
-        iterator end() noexcept {return iterator{nullptr};};
+        iterator end() noexcept;
 
         /**
          * @brief
          * @return
          * @note
          */
-
-        const_iterator end() const noexcept {return const_iterator{nullptr};};
+        const_iterator end() const noexcept;
         
         /**
          * @brief
          * @return
          * @note
          */
-
-        const_iterator cend() const noexcept {return const_iterator{nullptr};};
-
-        /**
-         * @brief
-         * @return
-         * @note
-         */
-
-        iterator begin() noexcept
-        {
-            if(!m_Root) {return iterator{nullptr};}
-
-            node_t* tmp = m_Root.get();
-            while(tmp -> m_LeftChild.get()) {tmp = tmp -> m_LeftChild.get();};
-
-            return iterator{tmp};
-        };
+        const_iterator cend() const noexcept;
 
         /**
          * @brief
          * @return
          * @note
          */
-
-        const_iterator begin() const noexcept
-        {
-            if(!m_Root) {return const_iterator{nullptr};}
-
-            node_t* tmp = m_Root.get();
-            while(tmp -> m_LeftChild.get()) {tmp = tmp -> m_LeftChild.get();};
-
-            return const_iterator{tmp};
-        };
+        iterator begin() noexcept;
 
         /**
          * @brief
          * @return
          * @note
          */
+        const_iterator begin() const noexcept;
 
-        const_iterator cbegin() noexcept
-        {
-            if(!m_Root) {return const_iterator{nullptr};}
+        /**
+         * @brief
+         * @return
+         * @note
+         */
+        const_iterator cbegin() const noexcept;
 
-            node_t* tmp = m_Root.get();
-            while(tmp -> m_LeftChild.get()) {tmp = tmp -> m_LeftChild.get();};
+        /** brief */
+        void balance();
 
-            return const_iterator{tmp};
-        };
+        /** @brief empties out the tree by releasing the memory occupied by the nodes. */
+        void clear() noexcept;
 };
+
+#include "support.BinarySearchTree.inl"
+#include "functions.BinarySearchTree.inl"
 
 #endif

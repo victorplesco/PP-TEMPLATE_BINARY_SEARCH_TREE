@@ -1,18 +1,20 @@
 /**
-    @file    iterator.h
-    @brief   Header for class iterator
+    @file    Iterator.h
+    @brief   Header file for class Iterator
     @authors Victor Plesco
     @date    01/01/1970
 */
 
-#ifndef _ITR_
-#define _ITR_
-
-#include <iostream>
+#ifndef _ITERATOR_h
+#define _ITERATOR_h
 
 template<class NodeType, typename PairType>
 class Iterator
 {	
+
+    typedef NodeType node_t;
+    typedef PairType pair_t;
+    typedef Iterator iterator;
     
 
     /* ########################################################################################################################################################################### */
@@ -20,102 +22,152 @@ class Iterator
     /* ########################################################################################################################################################################### */
 
 
-    private: 
+    public: 
 
-        NodeType* m_CurrentNode = nullptr; 
+        /** @brief POINTER to the curent node. */
+        node_t* m_CurrentNode = nullptr; 
 
 
     /* ########################################################################################################################################################################### */
-    /* ## _iterator: Constructor ################################################################################################################################################# */
+    /* ## Iterator: Constructor ################################################################################################################################################## */
     /* ########################################################################################################################################################################### */
 
 
     public: 
 
         /** 
-         * @brief DEFAULT CTOR. 
-         * @param 
-         * @note 
+         * @brief OVERLOADED CTOR. Constructs a new iterator given a pointer to a node.
+         * @param other pointer to a node or nullptr.
+         * @see 
          */
-
-        Iterator () : m_CurrentNode{nullptr}
-        {std::cout << "Iterator: default ctor\n";};
+        explicit Iterator (node_t* other) : m_CurrentNode{other}
+        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: overloaded (node_t* other) ctor\n";};
 
         /** 
-         * @brief OVERLOADED CTOR. 
-         * @param other pointer to an object of type Node.
-         * @note 
+         * @brief COPY CTOR. Constructs a new iterator given an existing iterator.
+         * @param other const lvalue reference to an existing iterator or nullptr. 
+         * @see 
          */
-
-        explicit Iterator (NodeType* other) : m_CurrentNode{other}
-        {std::cout << "Iterator: overloaded ctor\n";};
+        Iterator (const iterator& other) noexcept : m_CurrentNode{other.m_CurrentNode}
+        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: copy ctor\n";};
 
         /** 
-         * @brief COPY CTOR. 
-         * @param other reference to existing iterator. 
-         * @note 
+         * @brief MOVE CTOR. Constructs a new iterator given an existing iterator.
+         * @param other const rvalue reference to an existing iterator or nullptr. 
+         * @see 
          */
+        Iterator (const iterator&& other) noexcept : m_CurrentNode{other.m_CurrentNode}
+        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: move ctor\n";};
 
-        Iterator (const Iterator& other) noexcept : m_CurrentNode{other.m_CurrentNode}
-        {std::cout << "Iterator: copy ctor\n";};
-
-        /** 
-         * @brief MOVE CTOR. 
-         * @param other rvalue reference to existing iterator. 
-         * @note 
-         */
-
-        Iterator (const Iterator&& other) noexcept : m_CurrentNode{other.m_CurrentNode}
-        {std::cout << "Iterator: move ctor\n";};
+        /** @brief DESTRUCTOR. */
+        ~Iterator () noexcept 
+        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: destructor\n";};
 
 
     /* ########################################################################################################################################################################### */
-    /* ## _iterator: Operator #################################################################################################################################################### */
+    /* ## Iterator: Operator ##################################################################################################################################################### */
     /* ########################################################################################################################################################################### */
 
 
     public:
 
         /**
-         * @brief COPY ASSIGNMENT(=) operator.
-         * @param other: const lvalue reference to an iterator.
-         * @note
+         * @brief PRE-INCREMENT(++) operator. In an in-order traversal, we visit a node only after visiting all of its left descendents.
+         * @return iterator&: reference to an iterator.
+         * @see
          */
-
-        Iterator& operator= (const Iterator& other) noexcept
+        iterator& operator++() noexcept
         {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator++]\n";
+
+            if(m_CurrentNode -> m_RightChild.get())
+            {
+                if(_ITERATOR_CHECK_OPERATORS_)
+                std::cout << "\nIterator::operator++: RightChild exists [MOVE RIGHT]\n";
+
+                node_t* p_Node = m_CurrentNode -> m_RightChild.get();
+                
+                while(p_Node -> m_LeftChild.get()) 
+                {
+                    if(_ITERATOR_CHECK_OPERATORS_)
+                    std::cout << "\nIterator::operator++: LeftChild exists [MOVE LEFT]\n";
+
+                    p_Node = p_Node -> m_LeftChild.get();
+                }
+                
+                if(_ITERATOR_CHECK_OPERATORS_)
+                std::cout << "\nIterator::operator++: LeftChild doesn't exist [STOP]\n";
+
+                m_CurrentNode = p_Node;
+            }
+
+            else
+            {
+                if(_ITERATOR_CHECK_OPERATORS_)
+                std::cout << "\nIterator::operator++: RightChild doesn't exist [MOVE UP]\n";
+
+                node_t* p_Node = m_CurrentNode;
+                
+                while(p_Node -> m_Parent && p_Node -> m_Parent -> m_LeftChild.get() != p_Node) 
+                {
+                    if(_ITERATOR_CHECK_OPERATORS_)
+                    std::cout << "\nIterator::operator++: LeftChild exists [MOVE UP]\n";
+
+                    p_Node = p_Node -> m_Parent;
+                }
+
+                if(_ITERATOR_CHECK_OPERATORS_)
+                std::cout << "\nIterator::operator++: LeftChild doesn't exist [STOP]\n";
+
+                m_CurrentNode = p_Node -> m_Parent;
+            }
+
+            return *this;
+        };
+
+        /**
+         * @brief COPY ASSIGNMENT(=) operator.
+         * @param other const lvalue reference to an iterator.
+         * @return iterator&: reference to an iterator.
+         * @see
+         */
+        iterator& operator= (const iterator& other) noexcept
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator=]\n";
+
             m_CurrentNode = other.m_CurrentNode;
             return *this;
         };
 
         /**
-         * @brief DEREFERENCE(*) operator.
-         * @return 
-         * @note
-         */
-
-        PairType& operator* () const noexcept
-        {return m_CurrentNode -> m_Data;};
-
-        /**
          * @brief BOOLEAN EQUALITY(==) operator.
-         * @param other: const lvalue reference to an iterator.
-         * @return TRUE for EQUALITY, FALSE for INEQUALITY.
-         * @note
+         * @param other const lvalue reference to an iterator.
+         * @return bool: TRUE for EQUALITY, FALSE for INEQUALITY.
+         * @see
          */
+        bool operator== (const iterator& other) const noexcept
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator==]\n";
 
-        bool operator== (const Iterator& other) const noexcept
-        {return other.m_CurrentNode == m_CurrentNode;};
+            return other.m_CurrentNode == m_CurrentNode;
+        };
 
         /**
          * @brief BOOLEAN INEQUALITY(!=) operator.
-         * @param other: const lvalue reference to an iterator.
-         * @return TRUE for INEQUALITY, FALSE for EQUALITY.
-         * @note
+         * @param other const lvalue reference to an iterator.
+         * @return bool: TRUE for INEQUALITY, FALSE for EQUALITY.
+         * @see
          */
+        bool operator!= (const iterator& other) const noexcept
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator!=]\n";
 
-        bool operator!= (const Iterator& other) const noexcept
-        {return !(other.m_CurrentNode == m_CurrentNode);};
+            return !(other.m_CurrentNode == m_CurrentNode);
+        };
 };
 
 #endif

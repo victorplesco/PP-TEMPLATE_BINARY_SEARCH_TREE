@@ -1,19 +1,18 @@
 /**
     @file    Node.h
-    @brief   Header for class Node
+    @brief   Header file for class Node
     @authors Victor Plesco
     @date    01/01/1970
 */
 
-#ifndef _NODE_
-#define _NODE_
-
-#include <iostream>
-#include <memory>
+#ifndef _NODE_h
+#define _NODE_h
 
 template<typename PairType>
 class Node
 {
+
+    typedef PairType pair_t;
 
 
     /* ########################################################################################################################################################################### */
@@ -23,12 +22,8 @@ class Node
 
     public:
 
-        /** 
-         * @brief POINTER to the parent node. 
-         * @note  raw_ptr vs unique_ptr
-         */
-
-        Node* m_Parent;
+        /** @brief POINTER to the parent node. */
+        Node* m_Parent = nullptr;
 
         /** @brief unique_ptr to the right child. */
         std::unique_ptr<Node> m_RightChild; 
@@ -36,8 +31,11 @@ class Node
         /** @brief unique_ptr to the left child. */
         std::unique_ptr<Node> m_LeftChild; 
 
-        /** @brief DATA of type std::pair: KeyType is the PK, ValueType is customizable. */
-        PairType m_Data; 
+        /** 
+         * @brief DATA of type std::pair<KeyType, ValueType>: KeyType is the PK, ValueType is customizable. 
+         * @see BinarySearchTree<KeyType, ValueType, Comparison = std::less<KeyType>>
+         */
+        pair_t m_Data; 
 
 
     /* ########################################################################################################################################################################### */
@@ -47,27 +45,25 @@ class Node
 
     public:
 
-        /** @brief DEFAULT CTOR. Children don't need nullptr (std::unique_ptr). */
-        Node () noexcept : m_Parent{nullptr} {std::cout << "Node: default ctor\n";};
+        /** 
+         * @brief OVERLOADED_1 CTOR. Constructs a new node given a tuple(Key, Value).
+         * @param other const lvalue reference to the tuple(Key, Value) to be inserted in the node.
+         * @see BinarySearchTree::insert();
+         */
+        explicit Node (const pair_t& other) : m_Data{other}
+        {if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: overloaded_1 (const pair_t&) ctor\n";};
 
         /** 
-         * @brief OVERLOADED CTOR.
-         * @param
+         * @brief OVERLOADED_2 CTOR. Constructs a new node given a tuple(Key, Value).
+         * @param other const rvalue reference to the tuple(Key, Value) to be inserted in the node.
+         * @see NONE
          */
-
-        Node (const PairType& l_Data) : m_Parent{nullptr}, m_Data{l_Data}
-        {std::cout << "Node: overloaded ctor\n";};
-
-        /** 
-         * @brief MOVE CTOR.
-         * @param 
-         */
-
-        Node (const PairType&& l_Data) : m_Parent{nullptr}, m_Data{l_Data}
-        {std::cout << "Node: move ctor\n";};
+        explicit Node (const pair_t&& other) : m_Data{other}
+        {if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: overloaded_2 (const pair_t&&) ctor\n";};
 
         /** @brief DESTRUCTOR. */
-        ~Node () noexcept = default;
+        ~Node () noexcept 
+        {if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: destructor\n";};
 };
 
 #endif

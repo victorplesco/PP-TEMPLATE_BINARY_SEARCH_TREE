@@ -1,39 +1,41 @@
 #include <iostream>
-
-#include "Node.h"
-#include "Iterator.h"
 #include "BinarySearchTree.h"
 
-void PrintOutput(bool EXISTING_CHILD)
-{
-    if(EXISTING_CHILD) {std::cout << "\nTRUE: NODE CREATED!\n";}
-    else{std::cout << "\nFALSE: EXIT.\n";}
-};
+// compile with -Wall -Wextra -g, run with valgrind --leak-check = yes -v ./a.out.
 
 int main()
 {
-    
     BinarySearchTree<int, int> tree;
+    tree.insert(std::pair<int, int>(20, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(10, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>( 9, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(11, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(30, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(25, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(26, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(24, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(35, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(36, 1)).second;
+        std::cout << "\n";
+    tree.insert(std::pair<int, int>(34, 1)).second;
+        std::cout << "\n\n\n";
 
-    bool tmp;
-    
-    tmp = tree.insert(std::pair<int, int>(1, 1)).second;
-    PrintOutput(tmp);
-
-    tmp = tree.insert(std::pair<int, int>(10, 1)).second;
-    PrintOutput(tmp);
-
-    tmp = tree.insert(std::pair<int, int>(10, 1)).second;
-    PrintOutput(tmp);
-
-    tmp = tree.insert(std::pair<int, int>(9, 1)).second;
-    PrintOutput(tmp);
-    
-    tmp = tree.insert(std::pair<int, int>(8, 1)).second;
-    PrintOutput(tmp);
-
-
-    tree.find(8);
+    tree.find(34);
+    tree.end();
+    tree.cend();
+    tree.begin();
+    tree.cbegin();
+    tree.balance();
+    tree.clear();
 
     return 0;
 };
