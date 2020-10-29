@@ -1,7 +1,7 @@
 /**
     @file    Iterator.h
     @brief   Header file for class Iterator
-    @authors Victor Plesco
+    @authors Victor Plesco, Pietro Morichetti
     @date    01/01/1970
 */
 
@@ -35,33 +35,30 @@ class Iterator
 
     public: 
 
-        /** 
-         * @brief OVERLOADED CTOR. Constructs a new iterator given a pointer to a node.
-         * @param other pointer to a node or nullptr.
-         * @see 
-         */
-        explicit Iterator (node_t* other) : m_CurrentNode{other}
-        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: overloaded (node_t* other) ctor\n";};
+        /** @brief DEFAULT CTOR. @see NONE */
+        Iterator() = delete;
 
-        /** 
-         * @brief COPY CTOR. Constructs a new iterator given an existing iterator.
-         * @param other const lvalue reference to an existing iterator or nullptr. 
-         * @see 
-         */
-        Iterator (const iterator& other) noexcept : m_CurrentNode{other.m_CurrentNode}
-        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: copy ctor\n";};
+        /** @brief DEEP COPY CTOR. @see NONE */
+        Iterator (const iterator& other) = delete;
 
         /** 
          * @brief MOVE CTOR. Constructs a new iterator given an existing iterator.
          * @param other const rvalue reference to an existing iterator or nullptr. 
          * @see 
          */
-        Iterator (const iterator&& other) noexcept : m_CurrentNode{other.m_CurrentNode}
+        Iterator (iterator&& other) noexcept : m_CurrentNode{std::move(other.m_CurrentNode)}
         {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: move ctor\n";};
 
+        /** 
+         * @brief OVERLOADED CTOR. Constructs a new iterator given a pointer to a node.
+         * @param other pointer to a node or nullptr.
+         * @see 
+         */
+        explicit Iterator (node_t* other) noexcept : m_CurrentNode{other}
+        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: overloaded (node_t* other) ctor\n";};
+
         /** @brief DESTRUCTOR. */
-        ~Iterator () noexcept 
-        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: destructor\n";};
+        ~Iterator () noexcept {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: destructor\n";};
 
 
     /* ########################################################################################################################################################################### */
@@ -76,7 +73,7 @@ class Iterator
          * @return iterator&: reference to an iterator.
          * @see
          */
-        iterator& operator++() noexcept
+        iterator& operator++ () noexcept
         {
             if(_ITERATOR_CHECK_OPERATORS_)
             std::cout << "\nIterator: [operator++]\n";
@@ -132,12 +129,20 @@ class Iterator
          * @return iterator&: reference to an iterator.
          * @see
          */
-        iterator& operator= (const iterator& other) noexcept
+        iterator& operator= (const iterator& other) = delete;
+
+        /**
+         * @brief MOVE ASSIGNMENT(=) operator.
+         * @param other rvalue reference to an iterator.
+         * @return iterator&: reference to an iterator.
+         * @see
+         */
+        iterator& operator= (iterator&& other) noexcept
         {
             if(_ITERATOR_CHECK_OPERATORS_)
-            std::cout << "\nIterator: [operator=]\n";
+            std::cout << "\nIterator: [operator=] MOVE\n";
 
-            m_CurrentNode = other.m_CurrentNode;
+            m_CurrentNode = std::move(other.m_CurrentNode);
             return *this;
         };
 
@@ -168,6 +173,20 @@ class Iterator
 
             return !(other.m_CurrentNode == m_CurrentNode);
         };
+
+        /**
+         * @brief DEREFERENCE(*) operator.
+         * @return reference to a tuple(Key, Value).
+         * @see
+         */
+        pair_t& operator* () const noexcept
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator*]\n";
+
+            return m_CurrentNode -> m_Data;
+        };
+
 };
 
 #endif

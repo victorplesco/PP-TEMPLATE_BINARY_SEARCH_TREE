@@ -1,7 +1,7 @@
 /**
     @file    Node.h
     @brief   Header file for class Node
-    @authors Victor Plesco
+    @authors Thomas Deponte, Pietro Morichetti, Victor Plesco
     @date    01/01/1970
 */
 
@@ -31,10 +31,7 @@ class Node
         /** @brief unique_ptr to the left child. */
         std::unique_ptr<Node> m_LeftChild; 
 
-        /** 
-         * @brief DATA of type std::pair<KeyType, ValueType>: KeyType is the PK, ValueType is customizable. 
-         * @see BinarySearchTree<KeyType, ValueType, Comparison = std::less<KeyType>>
-         */
+        /** @brief DATA of type PairType = std::pair<KeyType, ValueType>: KeyType is the PK, ValueType is customizable. */
         pair_t m_Data; 
 
 
@@ -45,25 +42,51 @@ class Node
 
     public:
 
+        /** @brief DEFAULT CTOR. @see NONE */
+        Node() = delete;
+
+        /** @brief COPY CTOR. @see NONE */
+        Node(const Node& other) = delete;
+
+        /** @brief MOVE CTOR. @see NONE */
+        Node(Node&& other) = delete;
+
         /** 
          * @brief OVERLOADED_1 CTOR. Constructs a new node given a tuple(Key, Value).
          * @param other const lvalue reference to the tuple(Key, Value) to be inserted in the node.
-         * @see BinarySearchTree::insert();
+         * @see insert()
          */
-        explicit Node (const pair_t& other) : m_Data{other}
+        explicit Node (const pair_t& other) noexcept : m_RightChild{nullptr}, m_LeftChild{nullptr}, m_Data{other}
         {if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: overloaded_1 (const pair_t&) ctor\n";};
 
         /** 
          * @brief OVERLOADED_2 CTOR. Constructs a new node given a tuple(Key, Value).
-         * @param other const rvalue reference to the tuple(Key, Value) to be inserted in the node.
-         * @see NONE
+         * @param other const lvalue reference to the tuple(Key, Value) to be inserted in the node.
+         * @see 
          */
-        explicit Node (const pair_t&& other) : m_Data{other}
-        {if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: overloaded_2 (const pair_t&&) ctor\n";};
+        explicit Node (const pair_t&& other) noexcept : m_RightChild{nullptr}, m_LeftChild{nullptr}, m_Data{std::move(other)}
+        {
+            if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: overloaded_2 (const pair_t&) ctor\n";
+            other.first = other.second = 0;
+        };
 
         /** @brief DESTRUCTOR. */
-        ~Node () noexcept 
-        {if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: destructor\n";};
+        ~Node () noexcept {if(_NODE_CHECK_CONSTRUCTORS_) std::cout << "\nNode: destructor\n";};
+
+
+    /* ########################################################################################################################################################################### */
+    /* ## Node: Operator ######################################################################################################################################################### */
+    /* ########################################################################################################################################################################### */
+
+    
+    public:
+
+        /** @brief COPY ASSIGNMENT. @see NONE */
+        Node& operator= (const Node& other) = delete;
+
+        /** @brief MOVE ASSIGNMENT. @see NONE */
+        Node& operator= (Node&& other) = delete;
+
 };
 
 #endif
