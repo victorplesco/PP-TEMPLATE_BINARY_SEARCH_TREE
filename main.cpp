@@ -55,6 +55,8 @@ int main()
     BinarySearchTree<int, int> copiedtree{tree};
     std::cout << copiedtree << std::endl;
 
+    std::cout << tree << std::endl;
+
     tree.clear(); 
 
     return 0;

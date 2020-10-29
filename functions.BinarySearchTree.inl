@@ -76,12 +76,12 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_K
     {
         iterator itr = find(l_Key); 
         
-        if(itr.m_CurrentNode == nullptr) {return;}
+        if(itr.getCurrentNode() == nullptr) {return;}
         
         /**<  A pointer to the (current) node of the iterator "itr". */
-        node_t* p_Node = itr.m_CurrentNode; 
+        node_t* p_Node = itr.getCurrentNode(); 
         /**<  A pointer to the parent of the (current) node "p_Node". */
-        node_t* p_GrandParent = itr.m_CurrentNode -> m_Parent;
+        node_t* p_GrandParent = p_Node -> m_Parent;
         
         if(p_Node -> m_RightChild != nullptr)
         {
@@ -90,33 +90,31 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_K
             if(p_Node == p_GrandParent -> m_RightChild.get())
             {
                 /**< Assign to my parent the current node (so the actual parent of the current node will release his ownership). */
-                p_GrandParent -> m_RightChild = (itr.m_CurrentNode == itr.m_CurrentNode -> m_Parent -> m_RightChild.get()) ? 
-                    std::move(itr.m_CurrentNode -> m_Parent -> m_RightChild) : std::move(itr.m_CurrentNode -> m_Parent -> m_LeftChild);
+                p_GrandParent -> m_RightChild = (itr.getCurrentNode() == itr.getCurrentNode() -> m_Parent -> m_RightChild.get()) ? 
+                    std::move(itr.getCurrentNode() -> m_Parent -> m_RightChild) : std::move(itr.getCurrentNode() -> m_Parent -> m_LeftChild);
             }
-            
-            else  // CHECK ! //
+            else
             {
                 /**< Assign to my parent the current node (so the actual parent of the current node will release his ownership). */
-                p_GrandParent -> m_LeftChild = (itr.m_CurrentNode == itr.m_CurrentNode -> m_Parent -> m_RightChild.get()) ? 
-                    std::move(itr.m_CurrentNode -> m_Parent -> m_RightChild) : std::move(itr.m_CurrentNode -> m_Parent -> m_LeftChild);
+                p_GrandParent -> m_LeftChild = (itr.getCurrentNode() == itr.getCurrentNode() -> m_Parent -> m_RightChild.get()) ? 
+                    std::move(itr.getCurrentNode() -> m_Parent -> m_RightChild) : std::move(itr.getCurrentNode() -> m_Parent -> m_LeftChild);
             } 
         
-            itr.m_CurrentNode -> m_Parent = p_GrandParent;
+            itr.getCurrentNode() -> m_Parent = p_GrandParent;
         
             /**< Checking if the current node is my right child. */
-            if(p_Node -> m_RightChild != nullptr && itr.m_CurrentNode != p_Node -> m_RightChild.get())
+            if(p_Node -> m_RightChild != nullptr && itr.getCurrentNode() != p_Node -> m_RightChild.get())
             {
-                p_Node -> m_RightChild -> m_Parent = itr.m_CurrentNode;
-                itr.m_CurrentNode -> m_RightChild = std::move(p_Node -> m_RightChild);
+                p_Node -> m_RightChild -> m_Parent = itr.getCurrentNode();
+                itr.getCurrentNode() -> m_RightChild = std::move(p_Node -> m_RightChild);
             }
         
             if(p_Node -> m_LeftChild != nullptr)
             {
-                p_Node -> m_LeftChild -> m_Parent = itr.m_CurrentNode;
-                itr.m_CurrentNode -> m_LeftChild = std::move(p_Node -> m_LeftChild);
+                p_Node -> m_LeftChild -> m_Parent = itr.getCurrentNode();
+                itr.getCurrentNode() -> m_LeftChild = std::move(p_Node -> m_LeftChild);
             }
         } 
-        
         else if(p_Node -> m_LeftChild != nullptr)
         { 
             if(p_Node == p_GrandParent -> m_RightChild.get())
@@ -126,8 +124,7 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_K
             {p_GrandParent -> m_LeftChild = std::move(p_Node -> m_LeftChild);}
         
             p_Node -> m_LeftChild -> m_Parent = p_GrandParent;
-        }
-        
+        }        
         else
         {
             if(p_Node == p_GrandParent -> m_RightChild.get())
@@ -333,9 +330,9 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::balance()
         for(iterator itr{begin()}; itr != end(); ++itr)
             {
                 if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
-                std::cout << itr.m_CurrentNode -> m_Data.first;
+                std::cout << itr.getCurrentNode() -> m_Data.first;
 
-                array.push_back(itr.m_CurrentNode);    
+                array.push_back(itr.getCurrentNode());    
             };
 
         m_Root.reset(order(array, 0, array.size() - 1));
