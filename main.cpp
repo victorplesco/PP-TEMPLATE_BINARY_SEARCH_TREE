@@ -55,8 +55,8 @@ int main()
     tree.find(20);
     tree.find(36);
     tree.find(9);
-    //tree.erase(20);
-    //tree.erase(36);
+    // tree.erase(20);
+    // tree.erase(36);
     tree.end();
     tree.cend();
     tree.begin();
@@ -77,11 +77,12 @@ int main()
         std::cout << "\n < < < < PRINTING EMPTIED TREE from DEEP COPIED TREE (EMPTIED by MOVED TREE):\n\n" << movedtree;
         std::cout << "\nEND OF TESTING EMPTIED TREE > > > > \n";
 
+        std::cout << "\n < < < < CLEARING ALL TREES > > > > \n";
     tree.clear();
     deepcopiedtree.clear();
     movedtree.clear();
     emptiedtree.clear();
-        std::cout << "\n < < < < CLEARING ALL TREES > > > > \n";
+        std::cout << "\n < < < < END > > > > \n";
 
     return 0;
 };
