@@ -5,13 +5,16 @@
     @date    01/01/1970
 */
 
-#ifndef _BENCHMAKR_h
-#define _BENCHMAKR_h
+#ifndef _BENCHMARK_h
+#define _BENCHMARK_h
 
+/** < BinarySearchTree CHECKER */
+#define _BENCHMARK_CHECK_CONSTRUCTORS_ 0
+
+/** < Used Libraries */
 #include <iostream>
 #include <chrono>
 #include <memory>
-
 
 class Timer
 {
@@ -58,12 +61,12 @@ class Benchmark
        ~Benchmark() noexcept 
         {
            delete m_StartPoint, delete m_EndPoint;
-           std::cout << "\nBenchmark: destructor\n";
+           if(_BENCHMARK_CHECK_CONSTRUCTORS_) std::cout << "\nBenchmark: destructor\n";
         };
 
         template<class Class, typename Return, typename... Args, typename... ArgsBis>
         Benchmark(Class classcp, Return (Class::*funcptr)(Args...), ArgsBis... args)
-        {std::cout << "\nBenchmark: overloaded_1 [CLASS FUNCTION]\n";
+        {if(_BENCHMARK_CHECK_CONSTRUCTORS_) std::cout << "\nBenchmark: overloaded_1 [CLASS FUNCTION]\n";
             
             Timer Run(m_StartPoint, m_EndPoint);
             (classcp.*funcptr)(args...);     

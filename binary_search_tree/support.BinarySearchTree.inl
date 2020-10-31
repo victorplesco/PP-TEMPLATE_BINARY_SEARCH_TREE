@@ -84,8 +84,8 @@ BinarySearchTree<KeyType, ValueType, CompareType>::order(const std::vector<node_
         l_Node -> m_RightChild.release();
         l_Node -> m_LeftChild.release();
 
-        l_Node -> m_RightChild.reset(order(array, start, median - 1));
-        l_Node -> m_LeftChild.reset(order(array, median + 1, end));
+        l_Node -> m_RightChild.reset(order(array, median + 1, end));
+        l_Node -> m_LeftChild.reset(order(array, start, median - 1));
 
         if(l_Node -> m_RightChild.get()) {l_Node -> m_RightChild -> m_Parent = l_Node;}
         if(l_Node -> m_LeftChild.get())  {l_Node -> m_LeftChild  -> m_Parent = l_Node;}

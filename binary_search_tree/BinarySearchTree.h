@@ -20,16 +20,15 @@
 /** < Node CHECKER */
 #define _NODE_CHECK_CONSTRUCTORS_ 0
 
-
+/** < Used Libraries. */
 #include <iostream>
 #include <memory>
 #include <utility>
 #include <vector>
 
-
+/** < Class based Iterator and Node Class. */
 #include "Iterator.h"
 #include "Node.h"
-
 
 template<typename KeyType, typename ValueType, class CompareType = std::less<KeyType>>
 class BinarySearchTree
