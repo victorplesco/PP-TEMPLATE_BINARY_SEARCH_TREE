@@ -1,11 +1,18 @@
-#include <iostream>
-#include "BinarySearchTree.h"
+/**
+    @file    main.cpp
+    @brief   Main file for BinarySearchTree
+    @authors Thomas Deponte, Pietro Morichetti, Victor Plesco
+    @date    01/01/1970
+*/
 
-// compile with -Wall -Wextra -g, run with valgrind --leak-check = yes -v ./a.out.
+#include "./binary_search_tree/BinarySearchTree.h"
+#include <iostream>
 
 int main()
 {
-    
+
+#define CHECKERS_ON 0
+
     BinarySearchTree<int, int> nulltree;   
     nulltree.find(1);
     nulltree.erase(1);
@@ -15,49 +22,63 @@ int main()
     nulltree.cbegin();
     nulltree.balance();
     nulltree.clear(); 
+        std::cout << "\n < < < < END OF TESTING NULL TREE > > > > \n";
 
 
     BinarySearchTree<int, int> tree;
     tree.insert(std::pair<int, int>(20, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(10, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>( 9, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(11, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(30, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(25, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(26, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(24, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(35, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(36, 1)).second;
-        std::cout << "\n";
+        {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(34, 1)).second;
-        std::cout << "\n\n\n";
+        std::cout << "\n < < < < END OF INSERT > > > > \n";
 
-    tree.find(34);
-    tree.erase(34);
+    tree.find(20);
+    tree.find(36);
+    tree.find(9);
+    //tree.erase(20);
+    //tree.erase(36);
     tree.end();
     tree.cend();
     tree.begin();
     tree.cbegin();
     tree.balance();
-    tree.erase(20);
-    tree.erase(9);
-    std::cout << tree << std::endl;
+        std::cout << "\n < < < < END OF TESTING FILLED TREE > > > > \n";
 
-    BinarySearchTree<int, int> copiedtree{tree};
-    std::cout << copiedtree << std::endl;
+    BinarySearchTree<int, int> deepcopiedtree{tree};
+        std::cout << "\n < < < < PRINTING DEEP COPIED TREE from FILLED TREE:\n\n" << deepcopiedtree;
+        std::cout << "\nEND OF TESTING DEEP COPIED TREE > > > > \n";
 
-    std::cout << tree << std::endl;
 
-    tree.clear(); 
+    BinarySearchTree<int, int> movedtree{deepcopiedtree};
+        std::cout << "\n < < < < PRINTING MOVED TREE from DEEP COPIED TREE:\n\n" << movedtree;
+        std::cout << "\nEND OF TESTING DEEP COPIED TREE > > > > \n";
+
+    BinarySearchTree<int, int> emptiedtree{deepcopiedtree};
+        std::cout << "\n < < < < PRINTING EMPTIED TREE from DEEP COPIED TREE (EMPTIED by MOVED TREE):\n\n" << movedtree;
+        std::cout << "\nEND OF TESTING EMPTIED TREE > > > > \n";
+
+    tree.clear();
+    deepcopiedtree.clear();
+    movedtree.clear();
+    emptiedtree.clear();
+        std::cout << "\n < < < < CLEARING ALL TREES > > > > \n";
 
     return 0;
 };
