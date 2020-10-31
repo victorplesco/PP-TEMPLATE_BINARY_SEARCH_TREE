@@ -8,10 +8,13 @@
 #include "./binary_search_tree/BinarySearchTree.h"
 #include <iostream>
 
+#define CHECKERS_ON 0
+
+/** < COMPILE: c++ -g -ggdb3 -Wall -Wextra main.cpp ./a.out */
+/** < RUN: valgrind --leak-check=full --show-leak-kinds=all -v ./a.out */
+
 int main()
 {
-
-#define CHECKERS_ON 0
 
     BinarySearchTree<int, int> nulltree;   
     nulltree.find(1);
@@ -36,18 +39,18 @@ int main()
         {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(30, 1)).second;
         {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(25, 1)).second;
+    tree.emplace(std::pair<int, int>(25, 1)).second;
         {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(26, 1)).second;
+    tree.emplace(std::pair<int, int>(26, 1)).second;
         {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(24, 1)).second;
+    tree.emplace(std::pair<int, int>(24, 1)).second;
         {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(35, 1)).second;
+    tree.emplace(std::pair<int, int>(35, 1)).second;
         {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(36, 1)).second;
+    tree.emplace(std::pair<int, int>(36, 1)).second;
         {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(34, 1)).second;
-        std::cout << "\n < < < < END OF INSERT > > > > \n";
+    tree.emplace(std::pair<int, int>(34, 1)).second;
+        std::cout << "\n < < < < END OF INSERT and EMPLACE > > > > \n";
 
     tree.find(20);
     tree.find(36);
