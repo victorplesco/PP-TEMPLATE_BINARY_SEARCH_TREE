@@ -2,7 +2,8 @@
     @file    support.BinarySearchTree.inl 
     @brief   Inline file for support functions of class BinarySearchTree
     @authors Thomas Deponte, Pietro Morichetti, Victor Plesco
-    @date    01/01/1970
+    @date    05/03/2020
+    @version 2.1
 */
 
 /** @brief copy(). */

@@ -2,10 +2,11 @@
     @file    functions.BinarySearchTree.inl
     @brief   Inline file for member functions for class BinarySearchTree
     @authors Thomas Deponte, Pietro Morichetti, Victor Plesco
-    @date    01/01/1970
+    @date    05/03/2020
+    @version 2.1
 */
 
-/** @brief insert() */
+/** < INSERT */
 template<typename KeyType, typename ValueType, class CompareType>
 std::pair<Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>, bool>
 BinarySearchTree<KeyType, ValueType, CompareType>::insert(pair_t&& l_Data)
@@ -58,7 +59,7 @@ BinarySearchTree<KeyType, ValueType, CompareType>::insert(pair_t&& l_Data)
             return std::make_pair(iterator{p_Node}, true);
     };
 
-/** @brief emplace() */
+/** < EMPLACE */
 template<typename KeyType, typename ValueType, class ComparyType>
 template<class... Args>
 std::pair<Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>, bool>
@@ -69,7 +70,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::emplace(Args&&... args)
         return insert(pair_t{std::forward<Args>(args)...});
     };
 
-/** @brief erase() */
+/** < ERACE */
 template<typename KeyType, typename ValueType, class ComparyType>
 void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_Key) 
     {
@@ -381,7 +382,7 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_K
         }
     };
 
-/** @brief find() */
+/** < FIND */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key)
@@ -410,7 +411,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key)
         return iterator{nullptr};
     };
 
-/** @brief const find() */
+/** < FIND (CONST) */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, const std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key) const
@@ -438,7 +439,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key) co
         return const_iterator{nullptr};
     };
 
-/** @brief end() */
+/** < END */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::end() noexcept
@@ -449,7 +450,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::end() noexcept
         return iterator{nullptr};
     };
 
-/** @brief const end() */
+/** < END (CONST) */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, const std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::end() const noexcept
@@ -460,7 +461,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::end() const noexcept
         return const_iterator{nullptr};
     };
 
-/** @brief cend() */
+/** < CEND */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, const std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::cend() const noexcept
@@ -471,7 +472,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::cend() const noexcept
         return const_iterator{nullptr};
     };
 
-/** @brief begin() */
+/** < BEGIN */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::begin() noexcept
@@ -502,7 +503,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::begin() noexcept
         return iterator{p_Node};
     };
 
-/** @brief const begin() */
+/** < BEGIN (CONST) */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, const std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::begin() const noexcept
@@ -533,7 +534,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::begin() const noexcept
         return const_iterator{p_Node};
     };
 
-/** @brief cbegin() */
+/** < CBEGIN */
 template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, const std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::cbegin() const noexcept
@@ -564,7 +565,7 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::cbegin() const noexcept
         return const_iterator{p_Node};
     };
 
-/** @brief balance() */
+/** < BALANCE */
 template<typename KeyType, typename ValueType, class ComparyType>
 void BinarySearchTree<KeyType, ValueType, ComparyType>::balance()
     {
@@ -592,7 +593,7 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::balance()
         if(_BINARYSEARCHTREE_CHECK_FUNCTION_BALANCE_) {std::cout << "[BALANCE ENDED]\n\n";}
     };
 
-/** @brief clear() */
+/** < CLEAR */
 template<typename KeyType, typename ValueType, class ComparyType>
 void BinarySearchTree<KeyType, ValueType, ComparyType>::clear() noexcept
     {
