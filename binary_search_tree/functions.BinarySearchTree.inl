@@ -502,6 +502,5 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::clear() noexcept
         if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
         std::cout << "\nclear(): Root set to nullptr\n";
 
-        std::cout << "(CLEAR) reset root adr: " << m_Root.get() << "\n";
         m_Root.reset(nullptr);
     };
