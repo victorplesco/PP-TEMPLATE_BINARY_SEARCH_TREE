@@ -9,7 +9,7 @@
 #define _BINARYSEARCHTREE_h
 
 /** < */
-#define DEFAULT_VALUE = 0;
+#define DEFAULT_VALUE 0
 
 /** < BinarySearchTree CHECKER */
 #define _BINARYSEARCHTREE_CHECK_CONSTRUCTORS_ 0
