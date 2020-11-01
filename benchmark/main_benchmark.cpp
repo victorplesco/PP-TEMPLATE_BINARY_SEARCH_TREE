@@ -16,13 +16,13 @@
 #include <iomanip>
 #include <fstream>
 
-/** < COMPILE: c++ -g -ggdb3 -Wall -Wextra -std=c++14 main_benchmark.cpp */
+/** < COMPILE: c++ -g -ggdb3 -Wall -Wextra -std=c++14 main_\benchmark.cpp */
 /** < RUN: valgrind --leak-check=full --show-leak-kinds=all -v ./a.out */
 
 int main()
 {
         
-    #define NODES 10000 /** < Number of nodes to be created. */
+    #define NODES 100 /** < Number of nodes to be created. */
     #define ITERATIONS 10 /** < Number of iterations for each operation. */
 
 /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
@@ -236,10 +236,6 @@ int main()
     };
 #endif
 
-    std::cout << "Mean BCS: " << m_BalancedBCSTotal[ITERATIONS - 1] / ITERATIONS << std::endl;
-    std::cout << "Mean WCS: " << m_BalancedWCSTotal[ITERATIONS - 1] / ITERATIONS << std::endl;
-
-
     /** < BCS: CREATE .csv FROM 2D ARRAY */
     std::ofstream out_BBCS("BALANCE_BCS.csv");
     for(int i = 0; i < NODES; i++)
@@ -267,7 +263,94 @@ int main()
     for (int i = 0; i < ITERATIONS; i++) {delete[] m_BalancedWCS[i];}
     delete[] m_BalancedWCS;
 
+/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+/** <><> BENCHMARK insert() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
 
+#define TESTER
+#ifndef TESTER
+
+    /** < ARRAYTEN: CREATE 2D ARRAY */
+    double** m_Insert_TEN = new double*[ITERATIONS];
+    for(int i = 0; i < ITERATIONS; ++i)
+    {m_Insert_TEN[i] = new double[NODES];}
+
+    /** < ARRAYTEN: FILL 2D ARRAY with 0's */
+    for(int i = 0; i < NODES; i++)
+    {
+        for(int j = 0; j < ITERATIONS; j++)
+        {m_Insert_TEN[j][i] = 0;};
+    };
+
+    /** < ARRAYTEN: TEST find() with Iterations == ITERATIONS */
+    BinarySearchTree<int, int*> insert_TEN_tree;
+    for(int i = 0; i < NODES; i++)
+    {   
+        for(int j = 0; j < ITERATIONS; j++)
+        {
+            int* m_TEN = new int[10];
+            Benchmark PROJECT(insert_TEN_tree, &BinarySearchTree<int, int*>::insert, std::pair<int, int*>(m_ContainerStraight.at(i), m_TEN));
+            m_Find[j][i] = PROJECT.Duration();
+            delete m_TEN;
+        };
+        int* m_TEN = new int[10];
+        insert_TEN_tree.insert(std::pair<int, int*>(m_ContainerStraight.at(i), m_TEN));
+        delete m_TEN;
+    };
+
+/** < ARRAYTEN: PRINT MATRIX of DATA */
+#define PRINTER_MATRIX_FIND
+#ifndef PRINTER_MATRIX_FIND
+    for(int i = 0; i < NODES; i++) 
+    { 
+        for (int j = 0; j < ITERATIONS; j++) 
+        {
+            std::cout << std::fixed;   
+            std::cout << std::setprecision(9) << m_Insert_TEN[j][i] << " ";
+        }; 
+        std::cout << std::endl; 
+    };
+#endif
+
+    /** < ARRAYTEN: CREATE 1D ARRAY */
+    std::vector<double> m_InsertTENTotal(NODES);
+    
+    /** < ARRAYTEN: FILL 1D ARRAY with 0's */
+    for(int i = 0; i < NODES; i++)
+    {m_InsertTENTotal.at(i) = 0;};
+
+    for(int i = 0; i < NODES; i++)
+    {
+        for(int j = 0; j < ITERATIONS; j++)
+        m_InsertTENTotal.at(i) += m_Insert_TEN[j][i];
+    };
+
+/** < ARRAYTEN: PRINT MEAN of ITERATIONS */
+#define PRINTER_MEAN_FIND
+#ifndef PRINTER_MEAN_FIND
+    for(int i = 0; i < NODES; i++)
+    {
+        std::cout << "Complexity: " << i + 1 << " has mean ";
+        std::cout << std::fixed;   
+        std::cout << std::setprecision(9) << m_InsertTENTotal[i] << std::endl;
+    };
+#endif
+
+    /** < ARRAYTEN: CREATE .csv FROM 2D ARRAY */
+    std::ofstream out_ITEN("FIND.csv");
+    for(int i = 0; i < NODES; i++)
+    {
+        for(int j = 0; j < ITERATIONS; j++)
+        {
+            out_ITEN << std::fixed;
+            out_ITEN << std::setprecision(6) << m_Insert_TEN[j][i] << ",";}
+        out_ITEN << "\n";
+    };
+
+    for (int i = 0; i < ITERATIONS; i++) {delete[] m_Insert_TEN[i];}
+    delete[] m_Insert_TEN;
+
+#endif
 
 
 #define STOP

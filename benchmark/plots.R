@@ -30,10 +30,31 @@ ggplot(data = BSC_plot, aes(x = Complexity)) +
   geom_line(aes(y = Mean), col = "#f58f3b") +
   # geom_line(aes(y = Min),  col = "#009dd0") +
   # geom_line(aes(y = Max),  col = "indianred") +
-  geom_line(data= FIND_plot, aes(y = Mean), col = "indianred") + 
+  geom_line(data = FIND_plot, aes(y = Mean), col = "indianred") + 
   # Custom Labels;
   labs(title = "",
        subtitle = "",
        x = "Complexity (Nodes)",
        y = "Time (Seconds)") +
   theme_bw(base_size = 17.5, base_family = "Times");
+
+WCS_dtf  <- read.csv("~/BINARY-SEARCH-TREE/benchmark/BALANCE_WCS.csv", header = FALSE); WCS_dtf <- WCS_dtf[, -11];
+WSC_plot <- data.frame(Complexity = c(1:nrow(WCS_dtf)),
+                       Mean       = apply(X = WCS_dtf, MARGIN = 1, FUN = mean),
+                       Min        = apply(X = WCS_dtf, MARGIN = 1, FUN = min),
+                       Max        = apply(X = WCS_dtf, MARGIN = 1, FUN = max));
+
+ggplot(data = BSC_plot, aes(x = Complexity)) +
+  
+  geom_line(aes(y = Min), col = "#f58f3b") +
+  # geom_line(aes(y = Min),  col = "#009dd0") +
+  # geom_line(aes(y = Max),  col = "indianred") +
+  geom_line(data = WSC_plot, aes(y = Min), col = "#009dd0") + 
+  # Custom Labels;
+  labs(title = "",
+       subtitle = "",
+       x = "Complexity (Nodes)",
+       y = "Time (Seconds)") +
+  theme_bw(base_size = 17.5, base_family = "Times");
+
+# FAI DIFFERENZA
