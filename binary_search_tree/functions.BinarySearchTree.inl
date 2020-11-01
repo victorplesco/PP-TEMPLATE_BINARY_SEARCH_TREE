@@ -10,14 +10,14 @@ template<typename KeyType, typename ValueType, class CompareType>
 std::pair<Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>, bool>
 BinarySearchTree<KeyType, ValueType, CompareType>::insert(pair_t&& l_Data)
     {
-        if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
         std::cout << "\n\ninsert(): Key " << l_Data.first << "\n\n";
         
         if(m_Root.get() == nullptr)
         {
             m_Root.reset(new node_t{l_Data});
 
-            if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
             std::cout << "\ninsert(): Root not found [CREATE ROOT]\n";
 
                 return std::make_pair(iterator{m_Root.get()}, true);
@@ -32,14 +32,14 @@ BinarySearchTree<KeyType, ValueType, CompareType>::insert(pair_t&& l_Data)
         {
             case (equal)   :
 
-                if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
                 std::cout << "\ninsert()[switch]: KEY EQUAL [EXIT]\n";
                 return std::make_pair(iterator{sinked.first}, false);	
                 break;	
 
             case (go_left) :
 
-                if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
                 std::cout << "\ninsert()[switch]: LEFT CHILD [CREATE]\n";
                 p_Node = new node_t{l_Data};
                 sinked.first -> m_LeftChild.reset(p_Node);
@@ -47,7 +47,7 @@ BinarySearchTree<KeyType, ValueType, CompareType>::insert(pair_t&& l_Data)
 
             case (go_right) :
 
-                if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
                 std::cout << "\ninsert()[switch]: RIGHT CHILD [CREATE]\n";
                 p_Node = new node_t{l_Data};
                 sinked.first -> m_RightChild.reset(p_Node);
@@ -73,6 +73,9 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::emplace(Args&&... args)
 template<typename KeyType, typename ValueType, class ComparyType>
 void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_Key) 
     {
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+        {std::cout << "\n[ERASE CALLED]\n";}
+
         iterator itr = find(l_Key); 
         
         if(itr.getCurrentNode() == nullptr) {return;}
@@ -84,152 +87,218 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_K
 
         if(p_Node == m_Root.get())
         {
-            std::cout << "p_node è la root\n";
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_){std::cout << "[ERASE] target node is the root\n";}
+
             int check_right = 0; 
             int check_left = 0;
-
-            std::cout << "p_Node addr (root): " << p_Node << "\n";
-            std::cout << "p_Node: " << p_Node->m_Data.first << "\n";
+            
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+            {
+                std::cout << "[ERASE] p_Node (root) - addr: \n" << p_Node << " value: " << p_Node->m_Data.first << "\n";            
+            }
             if(p_Node -> m_RightChild != nullptr)
             {
-                std::cout << "exist the right child!\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                {
+                    std::cout << "[ERASE] exist the right child\n";
+                }
                 check_right = 1;
                 ++itr;
 
-                std::cout << "itr addr: " << itr.getCurrentNode() << "\n";
-                std::cout << "itr: " << itr.getCurrentNode()->m_Data.first << "\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                {
+                    std::cout << "[ERASE] itr - addr: " << itr.getCurrentNode() << " value: " << itr.getCurrentNode()->m_Data.first << "\n";
+                }
                 
                 if(itr.getCurrentNode() != p_Node -> m_RightChild.get())
                 {
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] itr is not the p_Node RightChild\n";
+                    }
                     if(itr.getCurrentNode() -> m_RightChild != nullptr)
                     {
+                        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                        {
+                            std::cout << "[ERASE] itr has a RightChild\n";
+                        }
                         p_Node -> m_RightChild -> m_LeftChild.release();
                         p_Node -> m_RightChild -> m_LeftChild.reset(itr.getCurrentNode()-> m_RightChild.get());
                         itr.getCurrentNode() -> m_RightChild -> m_Parent = p_Node -> m_RightChild.get();
+                        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                        {
+                            std::cout << "[ERASE] RightChild of p_Node has released it's LeftChild\n" 
+                                      << "[ERASE] RightChild of p_Node adopted itr as a LeftChild\n"
+                                      << "[ERASE] RightChild of itr recognised RightChild of p_Node as parent\n";
+                        }
                     }
 
                     p_Node -> m_RightChild -> m_Parent = itr.getCurrentNode();
                     itr.getCurrentNode() -> m_RightChild.release();
                     itr.getCurrentNode() -> m_RightChild.reset(p_Node -> m_RightChild.get());
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] RightChild of p_Node recognised itr as parent\n"
+                                  << "[ERASE] itr released its RightChild\n"
+                                  << "[ERASE] itr adopted ex-p_node RightChild as RightChild\n";
+                    }
                 }
                 
                 if(p_Node -> m_LeftChild != nullptr)
                 {
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] p_Node has a LeftChild\n";
+                    }
                     p_Node -> m_LeftChild -> m_Parent = itr.getCurrentNode();
                     itr.getCurrentNode() -> m_LeftChild.release();
                     itr.getCurrentNode() -> m_LeftChild.reset(p_Node -> m_LeftChild.get());
+
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] LeftChild of p_Node recognised itr as parent\n"
+                                  << "[ERASE] itr released its LeftChild\n"
+                                  << "[ERASE] itr adopted ex-p_Node LeftChild as LeftChild\n";
+                    }
                 }
                 
                 if(itr.getCurrentNode() == itr.getCurrentNode() -> m_Parent -> m_LeftChild.get())
                 {
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] itr is not the p_Node LeftChild\n";}
                     itr.getCurrentNode() -> m_Parent -> m_LeftChild.release();
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_){std::cout << "[ERASE] itr released its LeftChild\n";}
                 }
                 
                 itr.getCurrentNode() -> m_Parent = p_GrandParent;
-                std::cout << "itr new parent: " << itr.getCurrentNode()-> m_Parent << "\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) 
+                {std::cout << "[ERASE] itr new parent addr: " << itr.getCurrentNode()-> m_Parent << "\n";}
             }           
             else if(p_Node -> m_LeftChild != nullptr)
             {
-                std::cout << "exist the left child!\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node has not a RightChild, but it has a LeftChild\n";}
+                
                 check_left = 1;
                 p_Node -> m_LeftChild -> m_Parent = p_GrandParent;
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] LeftChild of p_Node recognised GranParent as parent";}
             }
             
             m_Root.release();
-            std::cout << "root addr: " << m_Root.get() << "\n";
-            std::cout << "p_Node addr: " << p_Node << "\n";
-            std::cout << "p_Node->m_RightChild addr: " << p_Node->m_RightChild.get() << "\n";
-            std::cout << "p_Node->m_LeftChild addr: " << p_Node->m_LeftChild.get() << "\n";
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+            {
+                std::cout << "[ERASE] Root addr: " << m_Root.get() << "\n"
+                          << "[ERASE] p_Node addr: " << p_Node << "\n"
+                          << "[ERASE] p_Node RightChild addr: " << p_Node->m_RightChild.get() << "\n"
+                          << "[ERASE] p_Node LeftChild addr: " << p_Node->m_LeftChild.get() << "\n";
+            }
 
             if(check_right == 1)
             {
-                std::cout << "check_right\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) 
+                {std::cout << "[ERASE] check_right was true: we can reset Root with itr\n";}
                 m_Root.reset(itr.getCurrentNode());
-                std::cout << "p_Node addr: " << p_Node << "\n";
-                std::cout << "root new addr: " << m_Root.get() << "\n";
-                std::cout << "itr addr: " << itr.getCurrentNode() << "\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                {std::cout << "[ERASE] new Root is itr\n";}
             }
             else if(check_left == 1)
             {
-                std::cout << "check_left\n";
-                m_Root = std::move(p_Node->m_LeftChild);
-                std::cout << "p_Node addr: " << p_Node << "\n";
-                std::cout << "root new addr: " << m_Root.get() << "\n";
-                std::cout << "itr addr: " << itr.getCurrentNode() << "\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) 
+                {std::cout << "[ERASE] check_right was false but check_left is true: we can reset Root with itr\n";}
+                m_Root = std::move(p_Node->m_LeftChild); //
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                {std::cout << "[ERASE] new Root is p_Node LeftChild\n";}
             }
+
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+            {
+                std::cout << "[ERASE] p_Node addr: " << p_Node << "\n"
+                          << "root new addr: " << m_Root.get() << "\n"
+                          << "itr addr: " << itr.getCurrentNode() << "\n";                    
+            }            
         }
         else 
         {
-            std::cout << "p_non non è la root\n";
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_){std::cout << "[ERASE] p_Node is not the Root\n";}
+
             if (p_Node -> m_RightChild != nullptr)
             {
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node has a RightChild\n";}
                 ++itr; 
-                std::cout << "esiste il figlio di destra\n";
                 if(p_Node == p_GrandParent -> m_RightChild.get())
                 {
                     /**< Assign to my parent the current node (so the actual parent of the current node will release his ownership). */
-                   std::cout << "p_node è il figlio di destra di suo padre\n";
+                   if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node is the RightChild of the GranParent\n";}
                    if(itr.getCurrentNode() == itr.getCurrentNode() -> m_Parent -> m_RightChild.get())
                    {
-                       std::cout << "itr è il figlio destro di suo padre (p_node)\n";
+                       if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] itr is the p_Node RightCHild\n";}
                        itr.getCurrentNode() -> m_Parent -> m_RightChild.release();
-                       std::cout << "p_ node rilascia itr\n";
+                       if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node released itr\n";}
                    }
                    else
                    {
-                       std::cout << "itr è il figlio sinistro di suo padre (p_node)\n";
-                       itr.getCurrentNode() -> m_Parent -> m_LeftChild.release();   
-                       std::cout << "p_ node rilascia itr\n";                
+                       if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node is the LeftChild of the GranParent\n";}
+                       itr.getCurrentNode() -> m_Parent -> m_LeftChild.release();  
+                       if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] Parent of itr released its LeftChild (itr)\n";} 
                    }
 
-                    std::cout << "nonno rilascia figlio destro (p_node)\n";
                     p_GrandParent -> m_RightChild.release();
-                    std::cout << "nonno adotta itr come figlio destro\n";
                     p_GrandParent -> m_RightChild.reset(itr.getCurrentNode());
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] GranParent released its RightChild (p_Node)\n"
+                                  << "[ERASE] GranParent adopted itr as RightChild\n";
+                    }
                 }
                 else
                 {
                     /**< Assign to my parent the current node (so the actual parent of the current node will release his ownership). */
-                    std::cout << "p_node è il figlio di sinistra di suo padre\n";
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node is the LeftChild of GranParent\n";}
                     if(itr.getCurrentNode() == itr.getCurrentNode() -> m_Parent -> m_RightChild.get())
                     {
-                        std::cout << "itr è figlio destro di suo padre\n";
+                        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] itr is the RightChild\n";}
                         itr.getCurrentNode() -> m_Parent -> m_RightChild.release();
-                        std::cout << "padre di itr ha rilasciato suo figlio destro (itr)\n";
+                        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] itr Parent released its RightChild (itr)\n";}
                     }
                     else
                     {
-                        std::cout << "itr è figlio sinistro di suo padre\n";
+                        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] itr is the LeftChild\n";}
                         itr.getCurrentNode() -> m_Parent -> m_LeftChild.release();
-                        std::cout << "padre di itr ha rilasciato suo figlio sinistro (itr)\n";
+                        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] itr Parent released its LeftChild (itr)\n";}
                     }
 
-                    std::cout << "nonno rilascia figlio sinistro (p_node)\n";
                     p_GrandParent -> m_LeftChild.release();
-                    std::cout << "nonnno adotta itr come figlio sinistro\n";
                     p_GrandParent -> m_LeftChild.reset(itr.getCurrentNode());
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) 
+                    {
+                        std::cout << "[ERASE] GranParent released its LeftChild (p_Node)\n"
+                                  << "[ERASE] GranParent adopted itr as LeftChild\n";
+                    }
                 } 
 
-                std::cout << "itr riconosce nonno come padre\n";
                 itr.getCurrentNode() -> m_Parent = p_GrandParent;
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] itr recognised GranParent as its Parent\n";}
             
                 /**< Checking if the current node is my right child. */
                 if(p_Node -> m_RightChild != nullptr && itr.getCurrentNode() != p_Node -> m_RightChild.get())
                 {
-                    std::cout << "p_node ha ancora figlio a destra e non è itr\n";
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node RightChild exist and it is not itr\n";}
+                    
                     p_Node -> m_RightChild -> m_Parent = itr.getCurrentNode();
-                    std::cout << "il figlio destro di p_node ha riconosciuto itr come padre\n";
                     itr.getCurrentNode() -> m_RightChild.release();
-                    std::cout << "itr ha rilasciato il figlio destro\n";
                     itr.getCurrentNode() -> m_RightChild.reset(p_Node -> m_RightChild.get());
-                    std::cout << "itr ha adottato il figlio destro di p_node\n";
                     p_Node -> m_RightChild.release();
-                    std::cout << "p_node ha rilasciato il figlio destro\n";
+
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] p_Node RightChild recognised itr as Parent\n"
+                                  << "[ERASE] itr released its RightChild\n"
+                                  << "[ERASE] itr adopted ex-p_Node RightChild as its RightChild\n"
+                                  << "[ERASE] p_Node released its (ex-)RightChild\n";
+                    }
                 }
 
                 if(p_Node -> m_LeftChild != nullptr)
                 {
-                    std::cout << "p_node ha anche un figlio sinistro\n";
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node has a LeftChild\n";}
                     itr.getCurrentNode() -> m_LeftChild.release();
                     std::cout << "itr ha rilasciato figlio sinistro\n";
                     itr.getCurrentNode() -> m_LeftChild.reset(p_Node -> m_LeftChild.get());
@@ -238,52 +307,78 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::erase(const KeyType& l_K
                     std::cout << "figlio sinistro di p_Node ha riconosciuto itr come padre\n";
                     p_Node -> m_LeftChild.release();
                     std::cout << "p_node ha rilasciato figlio sinitro\n";
+
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] itr released its LeftChild\n"
+                                  << "[ERASE] itr adopted p_Node LeftChild as its LeftChild\n"
+                                  << "[ERASE] p_Node LeftChild recognised itr as Parent\n"
+                                  << "[ERASE] p_Node released its (ex-)LeftChild\n";
+                    }
                 }
             } 
             else if(p_Node -> m_LeftChild != nullptr)
             { 
-                std::cout << "p_node ha solo figlio a sinistra\n";
-                p_Node -> m_LeftChild.release();
-                std::cout << "p_node rilascia figlio a sinistra\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node has only a LeftChild\n";}
                 if(p_Node == p_GrandParent -> m_RightChild.get())
                 {   
-                    std::cout << "p_node è figlio destro di suo padre (nonno)\n";
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node is the RightChild of GranParent\n";}
+                    
                     p_GrandParent -> m_RightChild.release();
-                    std::cout << "nonno ha rilasciato figlio destro (p_node)\n";
-                    p_GrandParent -> m_RightChild.reset(itr.getCurrentNode());
-                    std::cout << "nonno ha adottato itr come figlio destro\n";
+                    p_GrandParent -> m_RightChild.reset(p_Node -> m_LeftChild.get());
+
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] GranParent released its RightChild (p_Node)\n"
+                                  << "[ERASE] GranParent adopted p_Node LeftChild as its RightChild\n";
+                    }
                 }
                 else
                 {
-                    std::cout << "p_node è il figlio sinistro di suo padre (nonno)\n";
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node is the LeftChild of the GranParent\n";}
+
                     p_GrandParent -> m_LeftChild.release();
-                    std::cout << "nonno ha rilasciato figlio sinistro (p_node)";
-                    p_GrandParent -> m_LeftChild.reset(itr.getCurrentNode()); 
-                    std::cout << "nonno ha adottato itr come figlio sinitro\n";                   
+                    p_GrandParent -> m_LeftChild.reset(p_Node -> m_LeftChild.get()); 
+                    
+                    if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+                    {
+                        std::cout << "[ERASE] GranParent released its LeftChild (p_Node)\n"
+                                  << "[ERASE] GranParent adopted itr as LeftChild\n";
+                    }                
                 }
 
-                std::cout << "figlio sinistro di p_node riconosce nonno come padre\n";
                 p_Node -> m_LeftChild -> m_Parent = p_GrandParent;
+                p_Node -> m_LeftChild.release();
+
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {
+                    std::cout << "[ERASE] p_Node LeftChild recognised GranParent as Parent\n"
+                              << "[ERASE] P_Node released its (ex-)LeftChild\n";
+                }
             }        
             else
             {
-                std::cout << "p_node non ha figli\n";
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] p_Node has not children (it is a leaf)\n";}
                 if(p_Node == p_GrandParent -> m_RightChild.get())
                 {p_GrandParent -> m_RightChild.release();}
                 
                 else
                 {p_GrandParent -> m_LeftChild.release();}
-                std::cout << "il nonno ha rilasciato p_node\n";
+
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std::cout << "[ERASE] GranParent released its Child (p_Node)\n";}
             }
         }
 
-        std::cout << "p_node si isola\n";
         p_Node->m_Parent = nullptr;
         p_Node->m_RightChild.release();
         p_Node->m_LeftChild.release();
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_) {std:: cout << "[ERASE] p_Node isolated itself\n";}
 
-        std::cout << "p_node viene eliminato\n";
         delete p_Node;
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_ERASE_)
+        {
+            std::cout << "[ERASE] p_Node deleted\n" 
+                      << "[ERASE ENDED]\n\n";
+        }
     };
 
 /** @brief find() */
@@ -291,12 +386,12 @@ template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key)
     {
-        if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
         std::cout << "\nfind(): [CALLED]\n";
 
         if(m_Root.get() == nullptr) 
         {
-            if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
             std::cout << "\nfind(): Root doesn't exist [EXIT]\n";
             return iterator{nullptr};
         }
@@ -304,13 +399,13 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key)
         std::pair<node_t*, kin> sinked = sink(m_Root.get(), l_Key);
         if(sinked.second == kin::equal) 
         {
-            if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
             std::cout << "\nfind(): Key found [EXIT]\n";
 
             return iterator{sinked.first};
         }
 
-        if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
         std::cout << "\nfind(): Key not found[EXIT]!\n";
         return iterator{nullptr};
     };
@@ -320,12 +415,12 @@ template<typename KeyType, typename ValueType, class ComparyType>
 Iterator<Node<std::pair<const KeyType, ValueType>>, const std::pair<const KeyType, ValueType>>
 BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key) const
     {
-        if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
         std::cout << "\nfind(): [CALLED]\n";
 
         if(m_Root.get() == nullptr) 
         {
-            if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
             std::cout << "\nfind(): Root doesn't exist [EXIT]\n";
             return const_iterator{nullptr};
         }
@@ -333,12 +428,12 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key) co
         std::pair<node_t*, kin> sinked = sink(m_Root.get(), l_Key);
         if(sinked.second == kin::equal) 
         {
-            if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
             std::cout << "\nfind(): Key found [EXIT]\n";
             return const_iterator{sinked.first};
         }
 
-        if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_FIND_)
         std::cout << "\nfind(): Key not found[EXIT]!\n";
         return const_iterator{nullptr};
     };
@@ -476,23 +571,25 @@ void BinarySearchTree<KeyType, ValueType, ComparyType>::balance()
         if(m_Root == nullptr) {return;}
         std::vector<node_t*> array{};
 
-        if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
-        std::cout << "\nbalance(): [CALLED]\n";
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_BALANCE_) {std::cout << "\n[BALANCE CALLED]\n";}
 
         for(iterator itr{begin()}; itr != end(); ++itr)
             {
-                if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_BALANCE_)
                 std::cout << itr.getCurrentNode() -> m_Data.first << "\t";
 
                 array.push_back(itr.getCurrentNode());    
             };
 
-            if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_BALANCE_)
             std::cout << std::endl;
 
         m_Root.release();
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_BALANCE_) {std::cout << "[BALANCE] Root released\n";}
         m_Root.reset(order(array, 0, array.size() - 1));
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_BALANCE_) {std::cout << "[BALANCE] Root resetted\n";}
         m_Root -> m_Parent = nullptr;
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_BALANCE_) {std::cout << "[BALANCE ENDED]\n\n";}
     };
 
 /** @brief clear() */
@@ -500,8 +597,12 @@ template<typename KeyType, typename ValueType, class ComparyType>
 void BinarySearchTree<KeyType, ValueType, ComparyType>::clear() noexcept
     {
         if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
-        std::cout << "\nclear(): Root set to nullptr\n";
+        {
+            std::cout << "[CLEAR CALLED]\n";
+            std::cout << "[CLEAR] reset root addr: " << m_Root.get() << "\n";
+        }
 
-        std::cout << "(CLEAR) reset root adr: " << m_Root.get() << "\n";
         m_Root.reset(nullptr);
+
+        if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_) {std::cout << "[CLEAR ENDED]\n\n";}
     };

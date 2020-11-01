@@ -6,7 +6,7 @@
 */
 
 /** < BinarySearchTree Class containing Iterator and Node. */
-#include "/home/vrpo/BINARY-SEARCH-TREE/binary_search_tree/BinarySearchTree.h"
+#include "/home/pietro/Desktop/Github/BINARY-SEARCH-TREE/binary_search_tree/BinarySearchTree.h"
 
 /** Used Libraries. */
 #include <iostream>
@@ -30,6 +30,7 @@ int main()
 
 #define CHECKERS_ON 0
     BinarySearchTree<int, int> tree;
+    /*
     tree.insert(std::pair<int, int>(20, 1)); {if(CHECKERS_ON) std::cout << "\n";} // RVALUE AND LVALUE
     tree.insert(std::pair<int, int>(10, 1)); {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>( 9, 1)); {if(CHECKERS_ON) std::cout << "\n";}
@@ -42,8 +43,25 @@ int main()
     tree.emplace(std::pair<int, int>(35, 1)); {if(CHECKERS_ON) std::cout << "\n";}
     tree.emplace(std::pair<int, int>(36, 1)); {if(CHECKERS_ON) std::cout << "\n";}
     tree.emplace(std::pair<int, int>(34, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    */
+
+    tree.insert(std::pair<int, int>(7, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(8, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(2, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(1, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(6, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(4, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(3, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(5, 1)); {if(CHECKERS_ON) std::cout << "\n";}
         std::cout << "< < < < END OF INSERT and EMPLACE > > > > \n";
 
+    std::cout << "tree before erase\n" << tree << "\n";
+    tree.erase(6);
+    std::cout << "tree after erase\n" << tree << "\n";
+
+    tree.clear();
+
+    /*
     std::cout << tree[20] << " " << tree[36] << " " << tree[9]; // RVALUE AND LVALUE;
     tree.find(20);
     tree.find(36);
@@ -80,5 +98,6 @@ int main()
 
     //std::cout << itr.getCurrentNode() -> m_Data.first << std::endl;
 
+    */
     return 0;
 };
