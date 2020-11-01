@@ -2,7 +2,8 @@
     @file    Benchmark.h
     @brief   Header for class Benchmark
     @authors Thomas Deponte, Pietro Morichetti, Victor Plesco
-    @date    01/01/1970
+    @date    05/03/2020
+    @version 2.1
 */
 
 #ifndef _BENCHMARK_h
@@ -12,10 +13,16 @@
 #define _BENCHMARK_CHECK_CONSTRUCTORS_ 0
 
 /** < Used Libraries */
+<<<<<<< HEAD
 #include <iostream>
 #include <chrono>
 #include <memory>
 #include <thread>
+=======
+#include <iostream> // std::cout
+#include <chrono> // std::chrono::time_point, std::chrono::high_resolution_clock, std::chrono::microseconds
+#include <memory> // std::unique_pr<>, std::make_unique<>
+>>>>>>> 4febebedd458482d7a172510b6d14c3c0450c11c
 
 class Timer
 {
@@ -32,12 +39,31 @@ class Timer
         chrono_t* m_EndPoint;
 
     public:
+<<<<<<< HEAD
 
         /** < */
         Timer(chrono_t* StartPoint, chrono_t* EndPoint) : m_EndPoint{EndPoint}
         {*StartPoint = std::chrono::high_resolution_clock::now();};
 
         /** < */
+=======
+        
+        /**
+         * CTOR OVERLOADED
+         * 
+         * @brief 
+         * @param StartPoint
+         * @param EndPoint
+        */
+        Timer(chrono_t* StartPoint, chrono_t* EndPoint) : m_EndPoint{EndPoint}
+        {*StartPoint = std::chrono::high_resolution_clock::now();};
+
+        /**
+         * DESTRUCTOR
+         * 
+         * @brief 
+        */
+>>>>>>> 4febebedd458482d7a172510b6d14c3c0450c11c
        ~Timer()
         {*m_EndPoint = std::chrono::high_resolution_clock::now();};
 };
@@ -59,14 +85,28 @@ class Benchmark
 
     public:
 
+        /**
+         * DEFAULT CTOR
+         */
         Benchmark() noexcept {std::cout << "\nBenchmark: default ctor\n";};
        
+        /**
+         * DESTRUCTOR
+         */
        ~Benchmark() noexcept 
         {
            delete m_StartPoint, delete m_EndPoint;
            if(_BENCHMARK_CHECK_CONSTRUCTORS_) std::cout << "\nBenchmark: destructor\n";
         };
 
+        /**
+         * CTOR OVERLOADED 1
+         * 
+         * @brief 
+         * @param 
+         * @param 
+         * @see clear
+        */
         template<class Class, typename Return, typename... Args, typename... ArgsBis>
         Benchmark(Class classcp, Return (Class::*funcptr)(Args...), ArgsBis... args)
         {if(_BENCHMARK_CHECK_CONSTRUCTORS_) std::cout << "\nBenchmark: overloaded_1 [CLASS FUNCTION]\n";
@@ -75,6 +115,12 @@ class Benchmark
             (classcp.*funcptr)(args...);             
         };
         
+        /**
+         * CTOR OVERLOADED 2
+         * 
+         * @brief 
+         * @param  
+        */
         template<typename Return, typename... Args, typename... ArgsBis>
         Benchmark(Return (*funcptr)(Args...), ArgsBis... args)
         {
@@ -90,7 +136,17 @@ class Benchmark
 
     public:    
 
+<<<<<<< HEAD
         double&& Duration() 
+=======
+        /**
+         * DURATION
+         * 
+         * @brief 
+         * @return 
+        */
+        double Duration() 
+>>>>>>> 4febebedd458482d7a172510b6d14c3c0450c11c
         {   
             auto l_StartPoint = std::chrono::time_point_cast<std::chrono::microseconds>(*m_StartPoint).time_since_epoch().count();
             auto l_EndPoint   = std::chrono::time_point_cast<std::chrono::microseconds>(*m_EndPoint  ).time_since_epoch().count();
