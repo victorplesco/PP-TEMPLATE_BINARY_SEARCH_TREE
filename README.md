@@ -1,5 +1,5 @@
 # ADVANCED PROGRAMMING PROJECT: BINARY SEARCH TREE
-A joint effort of Thomas Deponte, Victor Aleksandrovic Plesco and Pietro Morichetti.
+A joint effort of [Thomas Deponte](https://github.com/freakontrol), [Victor Aleksandrovic Plesco](https://github.com/victorplesco) and [Pietro Morichetti](https://github.com/wilsonjefferson).
 
 ## STRUCTURE OF THE GIT FOLDER
 - Folder `binary_search_tree` - It contains the BST files: `BinarySeachTree.h` for the class BinarySeachTree, `Iterator.h` for the class Iterator, `Node.h` for the class Node, `functions.BinarySeachTree.inl` and `support.BinarySearchTree.inl` BST's inline files.
