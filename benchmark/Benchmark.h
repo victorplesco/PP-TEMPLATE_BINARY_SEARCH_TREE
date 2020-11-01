@@ -13,9 +13,9 @@
 #define _BENCHMARK_CHECK_CONSTRUCTORS_ 0
 
 /** < Used Libraries */
-#include <iostream> // std::cout
-#include <chrono> // std::chrono::time_point, std::chrono::high_resolution_clock, std::chrono::microseconds
-#include <memory> // std::unique_pr<>, std::make_unique<>
+#include <iostream> 
+#include <chrono>
+#include <memory>
 
 class Timer
 {
@@ -79,7 +79,7 @@ class Benchmark
          */
        ~Benchmark() noexcept 
         {
-           // delete m_StartPoint, delete m_EndPoint;
+           delete m_StartPoint, delete m_EndPoint;
            if(_BENCHMARK_CHECK_CONSTRUCTORS_) std::cout << "\nBenchmark: destructor\n";
         };
 
@@ -96,9 +96,7 @@ class Benchmark
         {if(_BENCHMARK_CHECK_CONSTRUCTORS_) std::cout << "\nBenchmark: overloaded_1 [CLASS FUNCTION]\n";
             
             Timer Run(m_StartPoint, m_EndPoint);
-            (classcp.*funcptr)(args...);     
-
-            classcp.clear();         
+            (classcp.*funcptr)(args...);             
         };
         
         /**
@@ -120,9 +118,6 @@ class Benchmark
     /* ## Menu ############################################################################################################################################################### */
     /* ####################################################################################################################################################################### */
 
-
-    private:
-
     public:    
 
         /**
@@ -136,7 +131,7 @@ class Benchmark
             auto l_StartPoint = std::chrono::time_point_cast<std::chrono::microseconds>(*m_StartPoint).time_since_epoch().count();
             auto l_EndPoint   = std::chrono::time_point_cast<std::chrono::microseconds>(*m_EndPoint  ).time_since_epoch().count();
 
-            return (l_EndPoint - l_StartPoint) * 10e-6;
+            return std::move((l_EndPoint - l_StartPoint) * 10e-6);
         };
 };
 
