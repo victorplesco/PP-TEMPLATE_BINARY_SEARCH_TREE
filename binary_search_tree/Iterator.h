@@ -12,6 +12,7 @@ template<class NodeType, typename PairType>
 class Iterator
 {	
 
+    /** < Templatizing for semantic consistency with BinarySearchTree Class. */
     typedef NodeType node_t;
     typedef PairType pair_t;
     typedef Iterator iterator;
@@ -22,7 +23,7 @@ class Iterator
     /* ########################################################################################################################################################################### */
 
 
-    public: 
+    private: 
 
         /** @brief POINTER to the curent node. */
         node_t* m_CurrentNode = nullptr;
@@ -35,24 +36,26 @@ class Iterator
 
     public: 
 
-        /** @brief DEFAULT CTOR. @see NONE */
-        Iterator() = delete;
+        /** @brief DEFAULT CTOR. */
+        Iterator() {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: default ctor\n";}
 
-        /** @brief DEEP COPY CTOR. @see NONE */
+        /** @brief DEEP COPY CTOR. */
         Iterator (const iterator& other) = delete;
 
         /** 
          * @brief MOVE CTOR. Constructs a new iterator given an existing iterator.
          * @param other const rvalue reference to an existing iterator or nullptr. 
-         * @see 
+         * @note The move ctor is triggered when returning by value an anonymous iterator.
          */
         Iterator (iterator&& other) noexcept : m_CurrentNode{std::move(other.m_CurrentNode)}
-        {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: move ctor\n";};
+        {
+            if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: move ctor\n";
+            other.m_CurrentNode = nullptr;
+        };
 
         /** 
          * @brief OVERLOADED CTOR. Constructs a new iterator given a pointer to a node.
          * @param other pointer to a node or nullptr.
-         * @see 
          */
         explicit Iterator (node_t* other) noexcept : m_CurrentNode{other}
         {if(_ITERATOR_CHECK_CONSTRUCTORS_) std::cout << "\nIterator: overloaded (node_t* other) ctor\n";};
@@ -71,7 +74,6 @@ class Iterator
         /**
          * @brief PRE-INCREMENT(++) operator. In an in-order traversal, we visit a node only after visiting all of its left descendents.
          * @return iterator&: reference to an iterator.
-         * @see
          */
         iterator& operator++ () noexcept
         {
@@ -127,7 +129,6 @@ class Iterator
          * @brief COPY ASSIGNMENT(=) operator.
          * @param other const lvalue reference to an iterator.
          * @return iterator&: reference to an iterator.
-         * @see
          */
         iterator& operator= (const iterator& other) = delete;
 
@@ -135,14 +136,21 @@ class Iterator
          * @brief MOVE ASSIGNMENT(=) operator.
          * @param other rvalue reference to an iterator.
          * @return iterator&: reference to an iterator.
-         * @see
          */
         iterator& operator= (iterator&& other) noexcept
         {
             if(_ITERATOR_CHECK_OPERATORS_)
             std::cout << "\nIterator: [operator=] MOVE\n";
+            
+            if(&other == this) {return *this;}
+            
+            /** < Release any resource we're holding. */
+            delete m_CurrentNode;
 
-            m_CurrentNode = std::move(other.m_CurrentNode);
+            /** < Transfer ownership of other.m_CurrentNode to m_CurrentNode. */
+            m_CurrentNode = other.getCurrentNode();
+            other.m_CurrentNode = nullptr;
+
             return *this;
         };
 
@@ -150,7 +158,6 @@ class Iterator
          * @brief BOOLEAN EQUALITY(==) operator.
          * @param other const lvalue reference to an iterator.
          * @return bool: TRUE for EQUALITY, FALSE for INEQUALITY.
-         * @see
          */
         bool operator== (const iterator& other) const noexcept
         {
@@ -164,7 +171,6 @@ class Iterator
          * @brief BOOLEAN INEQUALITY(!=) operator.
          * @param other const lvalue reference to an iterator.
          * @return bool: TRUE for INEQUALITY, FALSE for EQUALITY.
-         * @see
          */
         bool operator!= (const iterator& other) const noexcept
         {
@@ -177,15 +183,48 @@ class Iterator
         /**
          * @brief DEREFERENCE(*) operator.
          * @return reference to a tuple(Key, Value).
-         * @see
          */
-        pair_t& operator* () const noexcept
+        pair_t& operator* () noexcept
         {
             if(_ITERATOR_CHECK_OPERATORS_)
             std::cout << "\nIterator: [operator*]\n";
 
             return m_CurrentNode -> m_Data;
         };
+
+        /**
+         * @brief DEREFERENCE(*) operator.
+         * @return const reference to a tuple(Key, Value).
+         */
+        const pair_t& operator* () const noexcept
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator*]\n";
+
+            return m_CurrentNode -> m_Data;
+        };
+
+        /**
+         * @brief ARROW(->) operator.
+         * @return pointer to a tuple(Key, Value).
+         */
+        pair_t* operator-> () noexcept
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator->]\n";
+            return &(*(*this));
+        }
+
+        /**
+         * @brief ARROW(->) operator.
+         * @return const pointer to a tuple(Key, Value).
+         */
+        const pair_t* operator-> () const noexcept
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\nIterator: [operator->]\n";
+            return &(*(*this));
+        }
 
 
     /* ########################################################################################################################################################################### */
@@ -194,8 +233,17 @@ class Iterator
 
     public:
 
+        /**
+         * @brief getCurrentNode(). Getter.
+         * @return pointer to the current node.
+         */
         node_t* getCurrentNode() noexcept
-        {return m_CurrentNode;};
+        {
+            if(_ITERATOR_CHECK_OPERATORS_)
+            std::cout << "\ngetCurrentNode(): [CALLED]\n";
+
+            return m_CurrentNode;
+        };
 
 };
 

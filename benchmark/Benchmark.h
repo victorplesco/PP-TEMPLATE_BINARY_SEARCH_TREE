@@ -60,7 +60,7 @@ class Benchmark
        
        ~Benchmark() noexcept 
         {
-           delete m_StartPoint, delete m_EndPoint;
+           // delete m_StartPoint, delete m_EndPoint;
            if(_BENCHMARK_CHECK_CONSTRUCTORS_) std::cout << "\nBenchmark: destructor\n";
         };
 

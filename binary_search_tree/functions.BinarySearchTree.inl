@@ -20,7 +20,6 @@ BinarySearchTree<KeyType, ValueType, CompareType>::insert(pair_t&& l_Data)
             if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
             std::cout << "\ninsert(): Root not found [CREATE ROOT]\n";
 
-                /** @brief The below return will call overloaded and move iterator ctors. */
                 return std::make_pair(iterator{m_Root.get()}, true);
         }
 
@@ -302,12 +301,12 @@ BinarySearchTree<KeyType, ValueType, ComparyType>::find(const KeyType& l_Key)
             return iterator{nullptr};
         }
 
-        std::cout << m_Root.get() << "\n";
         std::pair<node_t*, kin> sinked = sink(m_Root.get(), l_Key);
         if(sinked.second == kin::equal) 
         {
             if(_BINARYSEARCHTREE_CHECK_FUNCTIONS_)
             std::cout << "\nfind(): Key found [EXIT]\n";
+
             return iterator{sinked.first};
         }
 

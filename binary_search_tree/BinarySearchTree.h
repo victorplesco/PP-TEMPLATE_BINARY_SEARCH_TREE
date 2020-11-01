@@ -8,6 +8,9 @@
 #ifndef _BINARYSEARCHTREE_h
 #define _BINARYSEARCHTREE_h
 
+/** < */
+#define DEFAULT_VALUE = 0;
+
 /** < BinarySearchTree CHECKER */
 #define _BINARYSEARCHTREE_CHECK_CONSTRUCTORS_ 0
 #define _BINARYSEARCHTREE_CHECK_SUPPORT_ 0
@@ -16,6 +19,7 @@
 /** < Iterator CHECKER */
 #define _ITERATOR_CHECK_CONSTRUCTORS_ 0
 #define _ITERATOR_CHECK_OPERATORS_ 0
+#define _ITERATOR_CHECK_FUNCTIONS_ 0
 
 /** < Node CHECKER */
 #define _NODE_CHECK_CONSTRUCTORS_ 0
@@ -66,16 +70,13 @@ class BinarySearchTree
          * @param other const lvalue reference to an existing tree.
          */
         BinarySearchTree (const BinarySearchTree& other) : m_Root{copy(other.m_Root.get(), nullptr)}
-        {
-            if(_BINARYSEARCHTREE_CHECK_CONSTRUCTORS_)
-            std::cout << "\nBinarySearchTree: deep copy ctor\n";
-        };
+        {if(_BINARYSEARCHTREE_CHECK_CONSTRUCTORS_) std::cout << "\nBinarySearchTree: deep copy ctor\n";};
 
         /** 
          * @brief MOVE CTOR. Constructs a new tree given an existing tree.
-         * @param other const rvalue reference to an existing tree.
+         * @param other rvalue reference to an existing tree.
          */
-        BinarySearchTree (const BinarySearchTree&& other) noexcept : m_Root{std::move(other.m_Root)}
+        BinarySearchTree (BinarySearchTree&& other) noexcept : m_Root{std::move(other.m_Root)}
         {if(_BINARYSEARCHTREE_CHECK_CONSTRUCTORS_) std::cout << "BinarySearchTree: move ctor\n";};
         
 
@@ -86,10 +87,7 @@ class BinarySearchTree
 
     private: 
 
-        /** 
-         * @brief Enum class containing the possible outcomes when comparing keys.
-         * @see sink();
-         */
+        /** @brief Enum class containing the possible outcomes when comparing keys. */
         enum kin {equal, go_left, go_right};
 
         /** @brief CompareType(std::less<>) OPERATOR. */
@@ -100,7 +98,6 @@ class BinarySearchTree
          * @param p_Me
          * @param p_Parent
          * @return 
-         * @see
          */ 
         node_t* copy(const node_t* p_Me, node_t* p_Parent);
 
@@ -114,7 +111,6 @@ class BinarySearchTree
          * @param p_Node pointer to the root.
          * @param l_Key const lvalue reference to a key.
          * @return std::pair<node_t*, kin>: node_t* is a pointer to node, kin is the output of the comparison.
-         * @see
          */
         std::pair<node_t*, kin> sink(node_t* p_Root, const KeyType& l_Key);
        
@@ -124,7 +120,6 @@ class BinarySearchTree
          * @param start
          * @param end
          * @return 
-         * @see
          */ 
         node_t* order(const std::vector<node_t*>& vector, const KeyType& start, const KeyType& end) const noexcept;
 
@@ -140,7 +135,6 @@ class BinarySearchTree
          * @brief insert().
          * @param
          * @return 
-         * @see
          */ 
         std::pair<iterator, bool> insert(pair_t&& l_Data);
 
@@ -148,7 +142,6 @@ class BinarySearchTree
          * @brief emplace().
          * @param
          * @return 
-         * @see
          */ 
         template<class... Args>
         std::pair<iterator, bool> emplace(Args&&... args);
@@ -157,7 +150,6 @@ class BinarySearchTree
          * @brief erase().
          * @param
          * @return 
-         * @see
          */ 
         void erase(const KeyType& l_Key);
 
@@ -165,7 +157,6 @@ class BinarySearchTree
          * @brief find(). Finds the node in the tree given a key. 
          * @param l_Key: const lvalue reference to the key to be found in the tree.
          * @return iterator to the node containing the key or nullptr otherwise.
-         * @see
          */ 
         iterator find(const KeyType& l_Key);
 
@@ -173,62 +164,49 @@ class BinarySearchTree
          * @brief const find(). Finds the node in the tree given a key. 
          * @param l_Key: const lvalue reference to the key to be found in the tree.
          * @return const_iterator to the node containing the key or nullptr otherwise.
-         * @see
          */ 
         const_iterator find(const KeyType& l_Key) const;
 
         /**
          * @brief end().
          * @return nullptr.
-         * @see
          */
         iterator end() noexcept;
 
         /**
          * @brief const end().
          * @return nullptr.
-         * @see
          */
         const_iterator end() const noexcept;
         
         /**
          * @brief cend().
          * @return nullptr.
-         * @see
          */
         const_iterator cend() const noexcept;
 
         /**
          * @brief begin().
          * @return
-         * @see
          */
         iterator begin() noexcept;
 
         /**
          * @brief const begin().
          * @return
-         * @see
          */
         const_iterator begin() const noexcept;
 
         /**
          * @brief cbegin().
          * @return
-         * @see
          */
         const_iterator cbegin() const noexcept;
 
-        /**
-         * @brief balance().
-         * @see
-         */
+        /** @brief balance(). */
         void balance();
 
-        /**
-         * @brief clear(). Empties out the tree by releasing the memory occupied by the nodes.
-         * @see
-         */
+        /** @brief clear(). Empties out the tree by releasing the memory occupied by the nodes. */
         void clear() noexcept;
 
 
@@ -237,12 +215,33 @@ class BinarySearchTree
     /* ########################################################################################################################################################################### */
 
 
+        ValueType& operator[](const KeyType& l_Key)
+        {
+            iterator itr{find(l_Key)}; 
+            if(itr.getCurrentNode() != nullptr) return itr -> second;
+
+            /**< A pair made up by an iterator on the inserted element, and a bool to notify if the element alerady exists or not. */
+            std::pair<iterator, bool> tmp = insert(pair_t(l_Key, DEFAULT_VALUE)); 
+            
+            return tmp.first -> second;
+        }
+
+        ValueType& operator[](KeyType&& l_Key)
+        {
+            iterator itr{find(std::forward<KeyType>(l_Key))}; 
+            if(itr.getCurrentNode() != nullptr) return itr -> second;
+
+            /**< A pair made up by an iterator on the inserted element, and a bool to notify if the element alerady exists or not. */
+            std::pair<iterator, bool> tmp = insert(pair_t(std::forward<KeyType>(l_Key), DEFAULT_VALUE)); 
+            
+            return tmp.first -> second;
+        }
+        
         /**
          * @brief
          * @param
          * @param
          * @return
-         * @see
          */
         friend std::ostream& operator<< (std::ostream& os, const BinarySearchTree& other) 
         {

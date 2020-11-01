@@ -30,8 +30,8 @@
 int main()
 {
         
-    #define NODES 1000 /** < Number of nodes to be created. */
-    #define ITERATIONS 100 /** < Number of iterations for each operation. */
+    #define NODES 100 /** < Number of nodes to be created. */
+    #define ITERATIONS 10 /** < Number of iterations for each operation. */
 
 /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
 /** <><> BENCHMARK find() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
@@ -74,7 +74,7 @@ int main()
 
 /** < PRINT MEAN of ITERATIONS */
 #define PRINTER_MEAN_FIND
-#ifdef PRINTER_MEAN_FIND
+#ifndef PRINTER_MEAN_FIND
     float m_FindTotal[NODES]; 
     for(int i = 0; i < NODES; i++)
     {
@@ -88,13 +88,6 @@ int main()
         std::cout << std::setprecision(9) << m_FindTotal[i]/ITERATIONS << std::endl;
     };
 #endif
-
-std::ofstream out("BENCHMARK_FIND.csv");
-for (auto& row : m_DataFind) {
-  for (auto col : row)
-    out << col <<',';
-  out << '\n';
-};
 
     /** < Fill a vector with 1:NODES integers and shuffle them randomly. */ 
     std::vector<int> m_ContainerShuffled(NODES);
@@ -133,5 +126,13 @@ for (auto& row : m_DataFind) {
     for (int i = 0; i < ITERATIONS; i++) {delete[] m_DataContainer[i];}
     delete[] m_DataContainer;
 
+    for (int i = 0; i < ITERATIONS; i++) {delete[] m_DataFind[i];}
+    delete[] m_DataFind;
+std::ofstream out("BENCHMARK_FIND.csv");
+for (auto& row : m_DataFind) {
+  for (auto col : row)
+    out << col <<',';
+  out << '\n';
+};
     return 0;
 }

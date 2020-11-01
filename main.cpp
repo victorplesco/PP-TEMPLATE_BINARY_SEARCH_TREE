@@ -30,29 +30,21 @@ int main()
 
 #define CHECKERS_ON 0
     BinarySearchTree<int, int> tree;
-    tree.insert(std::pair<int, int>(20, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(10, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>( 9, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(11, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(30, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(25, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(26, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(24, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(35, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(36, 1));
-        {if(CHECKERS_ON) std::cout << "\n";}
-    tree.insert(std::pair<int, int>(34, 1));
-        std::cout << "\n < < < < END OF INSERT and EMPLACE > > > > \n";
+    tree.insert(std::pair<int, int>(20, 1)); {if(CHECKERS_ON) std::cout << "\n";} // RVALUE AND LVALUE
+    tree.insert(std::pair<int, int>(10, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>( 9, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(11, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(30, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.insert(std::pair<int, int>(25, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    
+    tree.emplace(std::pair<int, int>(26, 1)); {if(CHECKERS_ON) std::cout << "\n";} // RVALUE AND LVALUE
+    tree.emplace(std::pair<int, int>(24, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.emplace(std::pair<int, int>(35, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.emplace(std::pair<int, int>(36, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+    tree.emplace(std::pair<int, int>(34, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+        std::cout << "< < < < END OF INSERT and EMPLACE > > > > \n";
 
+    std::cout << tree[20] << " " << tree[36] << " " << tree[9]; // RVALUE AND LVALUE;
     tree.find(20);
     tree.find(36);
     tree.find(9);
@@ -71,13 +63,12 @@ int main()
         std::cout << "\n < < < < PRINTING DEEP COPIED TREE from FILLED TREE:\n\n" << deepcopiedtree;
         std::cout << "\nEND OF TESTING DEEP COPIED TREE > > > > \n";
 
-
-    BinarySearchTree<int, int> movedtree{deepcopiedtree};
+    BinarySearchTree<int, int> movedtree{std::move(deepcopiedtree)};
         std::cout << "\n < < < < PRINTING MOVED TREE from DEEP COPIED TREE:\n\n" << movedtree;
         std::cout << "\nEND OF TESTING DEEP COPIED TREE > > > > \n";
 
     BinarySearchTree<int, int> emptiedtree{deepcopiedtree};
-        std::cout << "\n < < < < PRINTING EMPTIED TREE from DEEP COPIED TREE (EMPTIED by MOVED TREE):\n\n" << movedtree;
+        std::cout << "\n < < < < PRINTING EMPTIED TREE from DEEP COPIED TREE (EMPTIED by MOVED TREE):\n\n" << emptiedtree;
         std::cout << "\nEND OF TESTING EMPTIED TREE > > > > \n";
 
         std::cout << "\n < < < < CLEARING ALL TREES > > > > \n";
@@ -86,6 +77,8 @@ int main()
     movedtree.clear();
     emptiedtree.clear();
         std::cout << "\n < < < < END > > > > \n";
+
+    //std::cout << itr.getCurrentNode() -> m_Data.first << std::endl;
 
     return 0;
 };
