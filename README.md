@@ -1,5 +1,4 @@
-# ADVANCED PROGRAMMING PROJECT: 
-#     BINARY SEARCH TREE
+# ADVANCED PROGRAMMING PROJECT: BINARY SEARCH TREE
 A joint effort of [Thomas Deponte](https://github.com/freakontrol), [Victor Aleksandrovic Plesco](https://github.com/victorplesco) and [Pietro Morichetti](https://github.com/wilsonjefferson).
 
 ## STRUCTURE OF THE GIT FOLDER
