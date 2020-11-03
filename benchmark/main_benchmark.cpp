@@ -6,8 +6,8 @@
 */
 
 /** < BinarySearchTree Class containing Iterator and Node and Benchmark Class containing Timer. */
-#include "/home/vrpo/BINARY-SEARCH-TREE/binary_search_tree/BinarySearchTree.h"
-#include "/home/vrpo/BINARY-SEARCH-TREE/benchmark/Benchmark.h"
+#include "../binary_search_tree/BinarySearchTree.h"
+#include "./Benchmark.h"
 
 /** Used Libraries. */
 #include <iostream>
@@ -15,35 +15,123 @@
 #include <algorithm>
 #include <iomanip>
 #include <fstream>
+#include <array>
+#include <string>
 
-/** < COMPILE: c++ -g -ggdb3 -Wall -Wextra -std=c++14 main_\benchmark.cpp */
+/** < COMPILE: c++ -g -ggdb3 -Wall -Wextra -std=c++14 main_benchmark.cpp */
 /** < RUN: valgrind --leak-check=full --show-leak-kinds=all -v ./a.out */
+
+#define NODES 100 /** < Number of nodes to be created. */
+#define ITERATIONS 10 /** < Number of iterations for each operation. */
+
+/**
+ * createArray
+ * 
+ * @brief Allocates a 2D array on the heap and fills it with 0's.
+*/
+double** createArray()
+{
+    /** < CREATE 2D ARRAY */
+    double** x = new double*[ITERATIONS];
+    for(int i = 0; i < ITERATIONS; ++i) {x[i] = new double[NODES];};
+
+    /** < FILL 2D ARRAY with 0's */
+    for(int i = 0; i < NODES; i++) {for(int j = 0; j < ITERATIONS; j++) {x[j][i] = 0;};};
+
+    return x;
+};
+
+/**
+ * printMatrix
+ * 
+ * @brief Prints the 2D array.
+*/
+void printMatrix(double** x)
+{
+    for(int i = 0; i < NODES; i++) 
+    { 
+        for (int j = 0; j < ITERATIONS; j++) 
+        {
+            std::cout << std::fixed;   
+            std::cout << std::setprecision(9) << x[j][i] << " ";
+        }; 
+        std::cout << std::endl; 
+    };
+};
+
+/**
+ * printITRMean
+ * 
+ * @brief Calculates the means over the iterations on a certain level of complexity and prints them. 
+*/
+void printITRMean(double** x)
+{
+    /** < CREATE 1D ARRAY */
+    std::vector<double> v(NODES);
+    
+    /** < FILL 1D ARRAY with 0's */
+    for(int i = 0; i < NODES; i++)
+    {v.at(i) = 0;};
+
+    for(int i = 0; i < NODES; i++)
+    {
+        for(int j = 0; j < ITERATIONS; j++)
+        v.at(i) += x[j][i];
+    };
+    for(int i = 0; i < NODES; i++)
+    {
+        std::cout << "Complexity: " << i + 1 << " has mean ";
+        std::cout << std::fixed;   
+        std::cout << std::setprecision(9) << v[i] << std::endl;
+    };
+};
+
+/**
+ * createCSV
+ * 
+ * @brief Outputs a .csv file with times for iterations on columns and complexity on rows.
+*/
+void createCSV(double** x, std::string name)
+{
+    std::ofstream out(name);
+    for(int i = 0; i < NODES; i++)
+    {
+        for(int j = 0; j < ITERATIONS; j++)
+        {
+            out << std::fixed;
+            out << std::setprecision(6) << x[j][i] << ",";}
+        out << "\n";
+    };
+};
+
+/**
+ * deallocMatrix
+ * 
+ * @brief Deallocates the 2D array from the heap.
+*/
+void deallocMatrix(double** x)
+{
+    for (int i = 0; i < ITERATIONS; i++) {delete[] x[i];}
+    delete[] x;
+};
 
 int main()
 {
-        
-    #define NODES 100 /** < Number of nodes to be created. */
-    #define ITERATIONS 10 /** < Number of iterations for each operation. */
 
-/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
-/** <><> BENCHMARK find() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
-/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><> SHARED RESOURCES <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
 
     std::vector<int> m_ContainerStraight(NODES);
     std::iota(std::begin(m_ContainerStraight), std::end(m_ContainerStraight), 1);
     /** < for(int i = 0; i < NODES; i++) {std::cout << " " << m_ContainerStraight.at(i) << " \n";}; */
 
-    /** < CREATE 2D ARRAY */
-    double** m_Find = new double*[ITERATIONS];
-    for(int i = 0; i < ITERATIONS; ++i)
-    {m_Find[i] = new double[NODES];}
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><> BENCHMARK find() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
 
-    /** < FILL 2D ARRAY with 0's */
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {m_Find[j][i] = 0;};
-    };
+    /** < FIND: CREATE 2D ARRAY */
+    double** m_Find = createArray();
 
     /** < TEST find() with Iterations == ITERATIONS */
     BinarySearchTree<int, int> find_tree;
@@ -57,87 +145,35 @@ int main()
         };
     };
 
-/** < PRINT MATRIX of DATA */
+/** < FIND: PRINT MATRIX of DATA */
 #define PRINTER_MATRIX_FIND
 #ifndef PRINTER_MATRIX_FIND
-    for(int i = 0; i < NODES; i++) 
-    { 
-        for (int j = 0; j < ITERATIONS; j++) 
-        {
-            std::cout << std::fixed;   
-            std::cout << std::setprecision(9) << m_Find[j][i] << " ";
-        }; 
-        std::cout << std::endl; 
-    };
+printMatrix(m_Find);
 #endif
 
-    /** < CREATE 1D ARRAY */
-    std::vector<double> m_FindTotal(NODES);
-    
-    /** < FILL 1D ARRAY with 0's */
-    for(int i = 0; i < NODES; i++)
-    {m_FindTotal.at(i) = 0;};
-
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        m_FindTotal.at(i) += m_Find[j][i];
-    };
-
-/** < PRINT MEAN of ITERATIONS */
+/** < FIND: PRINT MEAN of ITERATIONS */
 #define PRINTER_MEAN_FIND
 #ifndef PRINTER_MEAN_FIND
-    for(int i = 0; i < NODES; i++)
-    {
-        std::cout << "Complexity: " << i + 1 << " has mean ";
-        std::cout << std::fixed;   
-        std::cout << std::setprecision(9) << m_FindTotal[i] << std::endl;
-    };
+printITRMean(m_Find);
 #endif
 
-    /** < CREATE .csv FROM 2D ARRAY */
-    std::ofstream out_F("FIND.csv");
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {
-            out_F << std::fixed;
-            out_F << std::setprecision(6) << m_Find[j][i] << ",";}
-        out_F << "\n";
-    };
+    /** < FIND: CREATE .csv FROM 2D ARRAY */
+    createCSV(m_Find, "FIND.csv");
 
-    for (int i = 0; i < ITERATIONS; i++) {delete[] m_Find[i];}
-    delete[] m_Find;
+    /** < FIND: FREE MATRIX FROM HEAP. */
+    deallocMatrix(m_Find);
 
-/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>< */
-/** <><> BENCHMARK balance() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
-/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>< */
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>< */
+    /** <><> BENCHMARK balance() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>< */
 
     /** < BSC: CREATE 2D ARRAY */
-    double** m_BalancedBCS = new double*[ITERATIONS];
-    for(int i = 0; i < ITERATIONS; ++i)
-    {m_BalancedBCS[i] = new double[NODES];}
-
-    /** < BSC: FILL 2D ARRAY for with 0's */
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {m_BalancedBCS[j][i] = 0;};
-    };
+    double** m_BalancedBCS = createArray();
 
     /** < WSC: CREATE 2D ARRAY */
-    double** m_BalancedWCS = new double*[ITERATIONS];
-    for(int i = 0; i < ITERATIONS; ++i)
-    {m_BalancedWCS[i] = new double[NODES];}
+    double** m_BalancedWCS = createArray();
 
-    /** < WSC: FILL 2D ARRAY for with 0's */
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {m_BalancedWCS[j][i] = 0;};
-    };
-
-    /** < TEST balance() with iterations == ITERATIONS */
+    /** < TEST balance() BCS and WCS with iterations == ITERATIONS */
     BinarySearchTree<int, int> balanced_list_tree;
     BinarySearchTree<int, int> balanced_balanced_tree;
     for(int i = 0; i < NODES; i++)
@@ -163,237 +199,110 @@ int main()
 /** < BCS: PRINT MATRIX of DATA */
 #define PRINTER_MATRIX_BALANCEDBCS
 #ifndef PRINTER_MATRIX_BALANCEDBCS
-    for(int i = 0; i < NODES; i++) 
-    { 
-        for (int j = 0; j < ITERATIONS; j++) 
-        {
-            std::cout << std::fixed;   
-            std::cout << std::setprecision(9) << m_BalancedBCS[j][i] << " ";
-        }; 
-        std::cout << std::endl; 
-    };
+printMatrix(m_BalancedBCS);
 #endif
 
 /** < WCS: PRINT MATRIX of DATA */
 #define PRINTER_MATRIX_BALANCEDWCS
 #ifndef PRINTER_MATRIX_BALANCEDWCS
-    for(int i = 0; i < NODES; i++) 
-    { 
-        for (int j = 0; j < ITERATIONS; j++) 
-        {
-            std::cout << std::fixed;   
-            std::cout << std::setprecision(9) << m_BalancedWCS[j][i] << " ";
-        }; 
-        std::cout << std::endl; 
-    };
+printMatrix(m_BalancedWCS);
 #endif
 
-    /** < BCS: CREATE 1D ARRAY */
-    std::vector<double> m_BalancedBCSTotal(NODES);
-    
-    /** < BCS: FILL 1D ARRAY with 0's */
-    for(int i = 0; i < NODES; i++)
-    {m_BalancedBCSTotal.at(i) = 0;};
-
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        m_BalancedBCSTotal.at(i) += m_BalancedBCS[j][i];
-    };
-
-/** < PRINT MEAN of ITERATIONS */
-#define PRINTER_MEAN_FIND
-#ifndef PRINTER_MEAN_FIND
-    for(int i = 0; i < NODES; i++)
-    {
-        std::cout << "Complexity: " << i + 1 << " has mean ";
-        std::cout << std::fixed;   
-        std::cout << std::setprecision(9) << m_BalancedBCSTotal[i] << std::endl;
-    };
+/** < BCS: PRINT MEAN of ITERATIONS */
+#define PRINTER_MEAN_BALANCEDBCS
+#ifndef PRINTER_MEAN_BALANCEDBCS
+printITRMean(m_BalancedBCS);
 #endif
-
-    /** < WCS: CREATE 1D ARRAY */
-    std::vector<double> m_BalancedWCSTotal(NODES);
-    
-    /** < WCS: FILL 1D ARRAY with 0's */
-    for(int i = 0; i < NODES; i++)
-    {m_BalancedWCSTotal.at(i) = 0;};
-
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        m_BalancedWCSTotal.at(i) += m_BalancedWCS[j][i];
-    };
 
 /** < WCS: PRINT MEAN of ITERATIONS */
-#define PRINTER_MEAN_FIND
-#ifndef PRINTER_MEAN_FIND
-    for(int i = 0; i < NODES; i++)
-    {
-        std::cout << "Complexity: " << i + 1 << " has mean ";
-        std::cout << std::fixed;   
-        std::cout << std::setprecision(9) << m_BalancedWCSTotal[i] << std::endl;
-    };
+#define PRINTER_MEAN_BALANCEDWCS
+#ifndef PRINTER_MEAN_BALANCEDWCS
+printITRMean(m_BalancedWCS);
 #endif
 
     /** < BCS: CREATE .csv FROM 2D ARRAY */
-    std::ofstream out_BBCS("BALANCE_BCS.csv");
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {
-            out_BBCS << std::fixed;
-            out_BBCS << std::setprecision(6) << m_BalancedBCS[j][i] << ",";}
-        out_BBCS << "\n";
-    };
+    createCSV(m_BalancedBCS, "BALANCE_BCS.csv");
+
+    /** < BCS: FREE MATRIX FROM HEAP. */
+    deallocMatrix(m_BalancedBCS);
 
     /** < WCS: CREATE .csv FROM 2D ARRAY */
-    std::ofstream out_WBCS("BALANCE_WCS.csv");
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {
-            out_WBCS << std::fixed;
-            out_WBCS << std::setprecision(6) << m_BalancedWCS[j][i] << ",";}
-        out_WBCS << "\n";
-    };
+    createCSV(m_BalancedWCS, "BALANCE_WCS.csv");
 
-    for (int i = 0; i < ITERATIONS; i++) {delete[] m_BalancedBCS[i];}
-    delete[] m_BalancedBCS;
-    for (int i = 0; i < ITERATIONS; i++) {delete[] m_BalancedWCS[i];}
-    delete[] m_BalancedWCS;
+    /** < WCS: FREE MATRIX FROM HEAP. */
+    deallocMatrix(m_BalancedWCS);
 
-/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
-/** <><> BENCHMARK insert() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
-/** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><> BENCHMARK insert() <><><><><><><><><><><><><><><><><><><><><><><><><><><> */
+    /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
 
-#define TESTER
-#ifndef TESTER
+    /** < TEN: CREATE 2D ARRAY */
+    double** m_Insert10 = createArray();
 
-    /** < ARRAYTEN: CREATE 2D ARRAY */
-    double** m_Insert_TEN = new double*[ITERATIONS];
-    for(int i = 0; i < ITERATIONS; ++i)
-    {m_Insert_TEN[i] = new double[NODES];}
+    /** < THOUSAND: CREATE 2D ARRAY */
+    double** m_Insert1000 = createArray();
 
-    /** < ARRAYTEN: FILL 2D ARRAY with 0's */
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {m_Insert_TEN[j][i] = 0;};
-    };
+    std::array<int, 10>   m__TEN;
+    std::array<int, 1000> m__THOUSAND;
 
-    /** < ARRAYTEN: TEST find() with Iterations == ITERATIONS */
-    BinarySearchTree<int, int*> insert_TEN_tree;
+    /** < TEST insert() with Iterations == ITERATIONS */
+    BinarySearchTree<int, std::array<int, 10>> insert_10_tree;
+    BinarySearchTree<int, std::array<int, 1000>> insert_1000_tree;
     for(int i = 0; i < NODES; i++)
     {   
         for(int j = 0; j < ITERATIONS; j++)
         {
-            int* m_TEN = new int[10];
-            Benchmark PROJECT(insert_TEN_tree, &BinarySearchTree<int, int*>::insert, std::pair<int, int*>(m_ContainerStraight.at(i), m_TEN));
-            m_Find[j][i] = PROJECT.Duration();
-            delete m_TEN;
+            {
+                std::array<int, 10> m_TEN;
+                Benchmark PROJECT(insert_10_tree, &BinarySearchTree<int, std::array<int, 10>>::insert, std::pair<int, std::array<int, 10>>(m_ContainerStraight.at(i), m_TEN));
+                m_Insert10[j][i] = PROJECT.Duration();
+            };
+
+            {
+                std::array<int, 1000> m_HUNDRED;
+                Benchmark PROJECT(insert_1000_tree, &BinarySearchTree<int, std::array<int, 1000>>::insert, std::pair<int, std::array<int, 1000>>(m_ContainerStraight.at(i), m_HUNDRED));
+                m_Insert1000[j][i] = PROJECT.Duration();
+            };
         };
-        int* m_TEN = new int[10];
-        insert_TEN_tree.insert(std::pair<int, int*>(m_ContainerStraight.at(i), m_TEN));
-        delete m_TEN;
+        insert_10_tree.insert(std::pair<int, std::array<int, 10>>(m_ContainerStraight.at(i), m__TEN));
+        insert_1000_tree.insert(std::pair<int, std::array<int, 1000>>(m_ContainerStraight.at(i), m__THOUSAND));
     };
 
-/** < ARRAYTEN: PRINT MATRIX of DATA */
-#define PRINTER_MATRIX_FIND
-#ifndef PRINTER_MATRIX_FIND
-    for(int i = 0; i < NODES; i++) 
-    { 
-        for (int j = 0; j < ITERATIONS; j++) 
-        {
-            std::cout << std::fixed;   
-            std::cout << std::setprecision(9) << m_Insert_TEN[j][i] << " ";
-        }; 
-        std::cout << std::endl; 
-    };
+/** < TEN: PRINT MATRIX of DATA */
+#define PRINTER_MATRIX_TEN
+#ifndef PRINTER_MATRIX_TEN
+printMatrix(m_Insert10);
 #endif
 
-    /** < ARRAYTEN: CREATE 1D ARRAY */
-    std::vector<double> m_InsertTENTotal(NODES);
-    
-    /** < ARRAYTEN: FILL 1D ARRAY with 0's */
-    for(int i = 0; i < NODES; i++)
-    {m_InsertTENTotal.at(i) = 0;};
-
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        m_InsertTENTotal.at(i) += m_Insert_TEN[j][i];
-    };
-
-/** < ARRAYTEN: PRINT MEAN of ITERATIONS */
-#define PRINTER_MEAN_FIND
-#ifndef PRINTER_MEAN_FIND
-    for(int i = 0; i < NODES; i++)
-    {
-        std::cout << "Complexity: " << i + 1 << " has mean ";
-        std::cout << std::fixed;   
-        std::cout << std::setprecision(9) << m_InsertTENTotal[i] << std::endl;
-    };
+/** < THOUSAND: PRINT MATRIX of DATA */
+#define PRINTER_MATRIX_THOUSAND
+#ifndef PRINTER_MATRIX_THOUSAND
+printMatrix(m_Insert1000);
 #endif
 
-    /** < ARRAYTEN: CREATE .csv FROM 2D ARRAY */
-    std::ofstream out_ITEN("FIND.csv");
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {
-            out_ITEN << std::fixed;
-            out_ITEN << std::setprecision(6) << m_Insert_TEN[j][i] << ",";}
-        out_ITEN << "\n";
-    };
-
-    for (int i = 0; i < ITERATIONS; i++) {delete[] m_Insert_TEN[i];}
-    delete[] m_Insert_TEN;
-
+/** < TEN: PRINT MEAN of ITERATIONS */
+#define PRINTER_MATRIX_TEN
+#ifndef PRINTER_MATRIX_TEN
+printITRMean(m_Insert10);
 #endif
 
-
-#define STOP
-#ifndef STOP
-    /** < Fill a vector with 1:NODES integers and shuffle them randomly. */ 
-    std::vector<int> m_ContainerShuffled(NODES);
-    std::iota(std::begin(m_ContainerShuffled), std::end(m_ContainerShuffled), 1);
-    std::random_device rnd_device;
-    std::mt19937 mersenne_engine {rnd_device()};
-    std::shuffle(begin(m_ContainerShuffled), end(m_ContainerShuffled), mersenne_engine);
-
-
-    double** m_DataContainer = new double*[ITERATIONS];
-    for(int i = 0; i < ITERATIONS; ++i)
-    {m_DataContainer[i] = new double[NODES];}
-
-    BinarySearchTree<int, int> benchmarktree;
-    for(int i = 0; i < NODES; i++)
-    {
-        for(int j = 0; j < ITERATIONS; j++)
-        {
-            Benchmark PROJECT(benchmarktree, &BinarySearchTree<int, int>::insert, std::pair<int, int>(m_ContainerShuffled.at(i), 1));
-            m_DataContainer[j][i] = PROJECT.Duration();
-        }
-        
-        benchmarktree.insert(std::pair<int, int>(m_ContainerShuffled.at(i), 1));
-    };
-/*
-    for(int i = 0; i < NODES; i++) 
-    { 
-        for (int j = 0; j < ITERATIONS; j++) 
-        {
-            std::cout << std::fixed;   
-            std::cout << std::setprecision(9) << m_DataContainer[j][i] << " ";}; 
-      
-        std::cout << std::endl; 
-    };
-*/
-    for (int i = 0; i < ITERATIONS; i++) {delete[] m_DataContainer[i];}
-    delete[] m_DataContainer;
-
+/** < THOUSAND: PRINT MEAN of ITERATIONS */
+#define PRINTER_MATRIX_THOUSAND
+#ifndef PRINTER_MATRIX_THOUSAND
+printITRMean(m_Insert1000);
 #endif
 
+    /** < TEN: CREATE .csv FROM 2D ARRAY */
+    createCSV(m_Insert10, "INSERT_10.csv");
+
+    /** < TEN: FREE MATRIX FROM HEAP. */
+    deallocMatrix(m_Insert10);
+
+    /** < THOUSAND: CREATE .csv FROM 2D ARRAY */
+    createCSV(m_Insert1000, "INSERT_1000.csv");
+
+    /** < THOUSAND: FREE MATRIX FROM HEAP. */
+    deallocMatrix(m_Insert1000);
 
     return 0;
-}
+};

@@ -58,7 +58,7 @@ class BinarySearchTree
     /* ########################################################################################################################################################################### */
 
 
-    private:
+    public:
 
         /** @brief unique_ptr to the root. */
         std::unique_ptr<node_t> m_Root;
@@ -338,7 +338,7 @@ class BinarySearchTree
         };
 };
 
-#include "support.BinarySearchTree.inl" // copy, sink, order
-#include "functions.BinarySearchTree.inl" // tree functions
+#include "support.BinarySearchTree.inl"
+#include "functions.BinarySearchTree.inl"
 
 #endif

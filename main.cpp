@@ -76,7 +76,5 @@ int main()
     emptiedtree.clear();
         std::cout << "\n < < < < END > > > > \n";
 
-    //std::cout << itr.getCurrentNode() -> m_Data.first << std::endl;
-
     return 0;
 };
