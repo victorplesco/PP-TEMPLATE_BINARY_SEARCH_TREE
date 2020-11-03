@@ -6,8 +6,9 @@
 */
 
 /** < BinarySearchTree Class containing Iterator and Node and Benchmark Class containing Timer. */
-#include "/home/vrpo/BINARY-SEARCH-TREE/binary_search_tree/BinarySearchTree.h"
-#include "/home/vrpo/BINARY-SEARCH-TREE/benchmark/Benchmark.h"
+
+#include "/home/pietro/Desktop/Github/BINARY-SEARCH-TREE/binary_search_tree/BinarySearchTree.h"
+#include "/home/pietro/Desktop/Github/BINARY-SEARCH-TREE/benchmark/Benchmark.h"
 
 /** Used Libraries. */
 #include <iostream>
@@ -22,7 +23,7 @@
 int main()
 {
         
-    #define NODES 100 /** < Number of nodes to be created. */
+    #define NODES 10 /** < Number of nodes to be created. */
     #define ITERATIONS 10 /** < Number of iterations for each operation. */
 
 /** <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> */
