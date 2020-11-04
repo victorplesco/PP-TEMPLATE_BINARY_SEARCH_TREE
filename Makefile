@@ -31,4 +31,7 @@ $(TEST): $(TESTSRC) $(BST)
 clean:
 	rm -f  *.o *~
 
+clean_all:
+	rm main_test
+
 .PHONY: clean main_test
