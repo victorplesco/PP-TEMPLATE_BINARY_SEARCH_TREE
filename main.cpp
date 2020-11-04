@@ -36,8 +36,9 @@ int main()
     tree.insert(std::pair<int, int>(11, 1)); {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(30, 1)); {if(CHECKERS_ON) std::cout << "\n";}
     tree.insert(std::pair<int, int>(25, 1)); {if(CHECKERS_ON) std::cout << "\n";}
-    
-    tree.emplace(std::pair<int, int>(26, 1)); {if(CHECKERS_ON) std::cout << "\n";}
+
+    std::pair<int, int> lvalue(26, 1);
+    tree.insert(lvalue); {if(CHECKERS_ON) std::cout << "\n";}
     tree.emplace(std::pair<int, int>(24, 1)); {if(CHECKERS_ON) std::cout << "\n";}
     tree.emplace(std::pair<int, int>(35, 1)); {if(CHECKERS_ON) std::cout << "\n";}
     tree.emplace(std::pair<int, int>(36, 1)); {if(CHECKERS_ON) std::cout << "\n";}

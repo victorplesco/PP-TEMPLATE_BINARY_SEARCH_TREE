@@ -168,6 +168,7 @@ class BinarySearchTree
          *         of the inserted node and a bool value used to check if the node already exist
          * @see sink(node_t* p_Root, const KeyType& l_Key)
          */ 
+        std::pair<iterator, bool> insert(const pair_t& l_Data);
         std::pair<iterator, bool> insert(pair_t&& l_Data);
 
         /**

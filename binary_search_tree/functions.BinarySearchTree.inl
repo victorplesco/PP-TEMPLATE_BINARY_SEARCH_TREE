@@ -9,6 +9,59 @@
 /** < INSERT */
 template<typename KeyType, typename ValueType, class CompareType>
 std::pair<Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>, bool>
+BinarySearchTree<KeyType, ValueType, CompareType>::insert(const pair_t& l_Data)
+    {
+        if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
+        std::cout << "\n\ninsert(): Key " << l_Data.first << "\n\n";
+        
+        if(m_Root.get() == nullptr)
+        {
+            m_Root.reset(new node_t{l_Data});
+
+            if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
+            std::cout << "\ninsert(): Root not found [CREATE ROOT]\n";
+
+                return std::make_pair(iterator{m_Root.get()}, true);
+        }
+
+        node_t* p_Root = m_Root.get();
+        node_t* p_Node;
+
+        std::pair<node_t*, kin> sinked = sink(p_Root, l_Data.first);
+
+        switch (sinked.second)
+        {
+            case (equal)   :
+
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
+                std::cout << "\ninsert()[switch]: KEY EQUAL [EXIT]\n";
+                return std::make_pair(iterator{sinked.first}, false);	
+                break;	
+
+            case (go_left) :
+
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
+                std::cout << "\ninsert()[switch]: LEFT CHILD [CREATE]\n";
+                p_Node = new node_t{l_Data};
+                sinked.first -> m_LeftChild.reset(p_Node);
+                break;
+
+            case (go_right) :
+
+                if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
+                std::cout << "\ninsert()[switch]: RIGHT CHILD [CREATE]\n";
+                p_Node = new node_t{l_Data};
+                sinked.first -> m_RightChild.reset(p_Node);
+                break;
+        };
+
+        p_Node -> m_Parent = sinked.first;
+            return std::make_pair(iterator{p_Node}, true);
+    };
+
+/** < INSERT */
+template<typename KeyType, typename ValueType, class CompareType>
+std::pair<Iterator<Node<std::pair<const KeyType, ValueType>>, std::pair<const KeyType, ValueType>>, bool>
 BinarySearchTree<KeyType, ValueType, CompareType>::insert(pair_t&& l_Data)
     {
         if(_BINARYSEARCHTREE_CHECK_FUNCTION_INSERT_)
